@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./index.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,61 +11,70 @@
     <!-- Chart.js 및 JSZip 라이브러리 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
-    <!-- Google Maps API 추가 -->
+    <!-- Google Maps API 및 MarkerClusterer 추가 -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA-V3WQjcSSI4Nj7VxDVNQNikHpx91J_zg&libraries=places"></script>
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
 </head>
 <body>
     <main>
-    <input type="file" id="fileInput" class="custom-button" onchange="updateFileName()"  style="display: none;"/>
-    <label for="fileInput" class="custom-file-upload" >파일 선택</label>
-    <span id="fileName"></span>
-    
-    <button onclick="uploadFile()">업로드</button>
+        <input type="file" id="fileInput" class="custom-button" onchange="updateFileName()"  style="display: none;"/>
+        <label for="fileInput" class="custom-file-upload" >파일 선택</label>
+        <span id="fileName"></span>
         
-    <hr>
-    
+        <button onclick="uploadFile()">업로드</button>
+            
+        <hr>
+        
 
-    <div id="body">
-        <div id="list">
-            <h2>자료실</h2>
-             <ul id="folderList"></ul>
+        <div id="body">
+            <div id="list">
+                <h2>자료실</h2>
+                 <ul id="folderList"></ul>
+            </div>
+            <div id="mapfolder">
+                <div id="map" style="height: 400px; width: 100%;"></div>
+            </div>
         </div>
-        <div id="mapfolder">
-        <div id="map" style="height: 400px; width: 100%;"></div>
-    </div>
-    </div>
-    <hr>
+        <hr>
 
-    <hr>
-    <div id="leg">
-        <div id="left">
-
-        <h1 id="folderTitle" style="display:none;"></h1>
-        <ul id="fileList"></ul>
-        </div>  
-        <div id="graph">
-
-            <canvas id="graphCanvas" style="display:none;" height="250" width="400"></canvas>
+        <hr>
+        <div id="leg">
+            <div id="left">
+                <h1 id="folderTitle" style="display:none;"></h1>
+                <ul id="fileList"></ul>
+            </div>  
+            <div id="graph">
+                <button onclick="changeGraphType('line')">선 그래프</button>
+                <button onclick="changeGraphType('bar')">막대 그래프</button>
+                <button onclick="changeGraphType('bubble')">방울 그래프</button>
+                <button onclick="changeGraphType('doughnut')">도넛 그래프</button>
+                <canvas id="graphCanvas" style="display:none;" height="250" width="400"></canvas>
+            </div>
         </div>
-    </div>
-    
-    <!-- 맵을 표시할 div -->
-    
-</main>
+    </main>
     <!-- Firebase 초기화 스크립트 -->
     <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage-compat.js"></script>
     <script>
+        
+        let graphtype = "line";
+        const currentDate = new Date();
+        const year = currentDate.getFullYear().toString().slice(-2); // 년도의 뒤에서 두 자리 가져오기
+        const month = ('0' + (currentDate.getMonth() + 1)).slice(-2); // 월의 두 자리 가져오기
+        const day = ('0' + currentDate.getDate()).slice(-2); // 일의 두 자리 가져오기
+
+        const formattedDate = year + '.' + month + '.' + day;
+
         // Firebase 프로젝트의 설정 정보
         const firebaseConfig = {
             apiKey: "AIzaSyAz3IZwipq6OS8f9ucO9j1ZKxyo-u78NIw",
-  authDomain: "macband-cf215.firebaseapp.com",
-  databaseURL: "https://macband-cf215-default-rtdb.firebaseio.com",
-  projectId: "macband-cf215",
-  storageBucket: "macband-cf215.appspot.com",
-  messagingSenderId: "586331708886",
-  appId: "1:586331708886:web:8a4416d2e48e9565c65877"
- };
+            authDomain: "macband-cf215.firebaseapp.com",
+            databaseURL: "https://macband-cf215-default-rtdb.firebaseio.com",
+            projectId: "macband-cf215",
+            storageBucket: "macband-cf215.appspot.com",
+            messagingSenderId: "586331708886",
+            appId: "1:586331708886:web:8a4416d2e48e9565c65877"
+        };
 
         // Firebase 초기화
         firebase.initializeApp(firebaseConfig);
@@ -77,6 +86,9 @@
         let myChart;
         let map;
         let markers = [];
+
+        // 마커 클러스터러 생성
+        let markerCluster;
 
         // 페이지 로드시 실행
         window.onload = function() {
@@ -93,11 +105,10 @@
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
             const folderName = prompt("(학교_팀) 의 양식으로 작성해주세요.");
-            
             if (folderName) { // 폴더 이름이 입력되었을 때 계속 진행
                 // 폴더 경로 설정
                 const folderPath = 'uploads/' + folderName.replace(/\s+/g, '_');
-                const storageRef = storage.ref(folderPath + '/' + file.name);
+                const storageRef = storage.ref(folderPath + '/' + file.name+'_'+formattedDate);
                 const task = storageRef.put(file);
 
                 // 사용자가 입력한 폴더 이름을 기반으로 지오코딩하여 맵에 마커 표시
@@ -240,14 +251,14 @@
             // 그래프 생성
             const ctx = document.getElementById('graphCanvas').getContext('2d');
             myChart = new Chart(ctx, {
-                type: 'line',
+                type: graphtype,
                 data: {
                     labels: labels,
                     datasets: [{
                         label: '온도',
                         data: values,
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(0,0,0,0.1)',
+                        borderColor: 'rgba(0,0,255)',
                         borderWidth: 1
                     }]
                 },
@@ -261,11 +272,29 @@
             });
         }
 
+        // 그래프 유형 변경 함수
+        function changeGraphType(type) {
+            graphtype = type;
+
+            // 현재 차트가 있으면 차트만 업데이트하고 없으면 새로운 차트 그리기
+            if (myChart) {
+                myChart.config.type = type;
+                myChart.update();
+            } else {
+                drawGraphFromCSV(currentCSVData);
+            }
+        }
+
         // 맵 초기화
         function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
                 center: { lat: 37.5642135, lng: 127.0016985 },
                 zoom: 8
+            });
+
+            // 마커 클러스터러 생성
+            markerCluster = new MarkerClusterer(map, markers, {
+                imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
             });
         }
 
@@ -274,9 +303,38 @@
             const marker = new google.maps.Marker({
                 position: location,
                 map: map,
-                title: address
+                title: address,
+                icon: {
+                url: 'https://firebasestorage.googleapis.com/v0/b/macband-cf215.appspot.com/o/Mac%20photo%2Fbee.png?alt=media&token=4707b1b3-67fc-4d7c-a57a-53d5ef4265a4', // 변경할 마커 이미지의 URL
+                scaledSize: new google.maps.Size(50, 50), // 이미지 크기 조절
+                origin: new google.maps.Point(0, 0), // 이미지의 원점 설정
+                anchor: new google.maps.Point(25, 25) // 이미지의 중심점 설정
+            }
+        
+        
             });
+            // 마커 클릭 이벤트 설정
+marker.addListener('click', function() {
+    // 마커의 위치를 이용하여 지오코딩
+    geocodeMarker(marker.getPosition(), function(address) {
+        // 인포윈도우 생성
+        const infowindow = new google.maps.InfoWindow({
+            content: folderName
+        });
+        // 클릭한 마커 위에 인포윈도우 표시
+        infowindow.open(map, marker);
+    });
+});
+
+// 마커 위치로부터 주소를 지오코딩하는 함수
+
+
+
+
             markers.push(marker); // 마커를 배열에 추가
+
+            // 클러스터러에 마커 추가
+            markerCluster.addMarker(marker);
         }
 
         // 저장된 주소를 불러와서 맵에 마커 표시
@@ -304,6 +362,7 @@
                 }
             });
         }
+        
     </script>
 </body>
 </html>
