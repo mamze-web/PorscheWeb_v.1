@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./index.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Cloud Storage 파일 업로드 및 그래프</title>
+    <!-- Chart.js 및 JSZip 라이브러리 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <!-- Google Maps API 추가 -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA-V3WQjcSSI4Nj7VxDVNQNikHpx91J_zg&libraries=places"></script>
+</head>
+<body>
+    <main>
+    <input type="file" id="fileInput" class="custom-button" onchange="updateFileName()" style="display: none;"/>
+    <label for="fileInput" class="custom-file-upload">파일 선택</label>
+    <span id="fileName"></span>
+    
+    <button onclick="uploadFile()">업로드</button>
+        
+    <hr>
+    
+
+    <div id="body">
+        <div id="list">
+            <h2>자료실</h2>
+             <ul id="folderList"></ul>
+        </div>
+        <div id="mapfolder">
+        <div id="map" style="height: 400px; width: 100%;"></div>
+    </div>
+    </div>
+    <hr>
+
+    <hr>
+    <div id="leg">
+        <div id="left">
+            <h3>파일 목록</h3>
+        <h1 id="folderTitle" style="display:none;"></h1>
+        <ul id="fileList"></ul>
+        </div>  
+        <div id="graph">
+            <h3>그래프</h3>
+            <canvas id="graphCanvas" style="display:none;" height="250" width="400"></canvas>
+        </div>
+    </div>
+    
+    <!-- 맵을 표시할 div -->
+    
+</main>
+    <!-- Firebase 초기화 스크립트 -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage-compat.js"></script>
+    <script>
+        // Firebase 프로젝트의 설정 정보
+        const firebaseConfig = {
+            apiKey: "AIzaSyAz3IZwipq6OS8f9ucO9j1ZKxyo-u78NIw",
+  authDomain: "macband-cf215.firebaseapp.com",
+  databaseURL: "https://macband-cf215-default-rtdb.firebaseio.com",
+  projectId: "macband-cf215",
+  storageBucket: "macband-cf215.appspot.com",
+  messagingSenderId: "586331708886",
+  appId: "1:586331708886:web:8a4416d2e48e9565c65877"
+ };
+
+        // Firebase 초기화
+        firebase.initializeApp(firebaseConfig);
+
+        // Firebase Cloud Storage 참조
+        const storage = firebase.storage();
+
+        // 전역 변수로 myChart 선언
+        let myChart;
+        let map;
+        let markers = [];
+
+        // 페이지 로드시 실행
+        window.onload = function() {
+            // 업로드된 폴더 목록 가져오기
+            getFolderList();
+            // 맵 초기화
+            initMap();
+            // 저장된 주소를 불러와서 맵에 마커 표시
+            loadAddresses();
+        };
+
+        // 파일 업로드 함수
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const folderName = prompt("(학교_팀) 의 양식으로 작성해주세요.");
+            
+            if (folderName) { // 폴더 이름이 입력되었을 때 계속 진행
+                // 폴더 경로 설정
+                const folderPath = 'uploads/' + folderName.replace(/\s+/g, '_');
+                const storageRef = storage.ref(folderPath + '/' + file.name);
+                const task = storageRef.put(file);
+
+                // 사용자가 입력한 폴더 이름을 기반으로 지오코딩하여 맵에 마커 표시
+                const geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ 'address': folderName }, function(results, status) {
+                    if (status === 'OK') {
+                        const location = results[0].geometry.location;
+                        addMarker(location, folderName);
+                    } else {
+                        console.error('지오코딩 에러:', status);
+                    }
+                });
+
+                task.then(snapshot => {
+                    console.log('파일 업로드 완료');
+                    // 업로드된 폴더 목록 다시 불러오기
+                    getFolderList();
+                }).catch(error => {
+                    console.error('파일 업로드 에러:', error);
+                });
+            } else {
+                console.log("폴더 이름을 입력하지 않았습니다.");
+            }
+        }
+
+        // 업로드된 폴더 목록 가져오기
+        function getFolderList() {
+            const folderList = document.getElementById('folderList');
+            folderList.innerHTML = ''; // 기존 목록 초기화
+
+            const storageRef = storage.ref('uploads');
+            storageRef.listAll().then(function(result) {
+                result.prefixes.forEach(function(folderRef) {
+                    const li = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = "#"; // 클릭 가능한 링크로 설정
+                    link.textContent = folderRef.name; // 폴더 이름을 텍스트로 사용
+                    link.onclick = function() {
+                        processFolder(folderRef); // 폴더 클릭 시 처리 함수 호출
+                    };
+                    li.appendChild(link);
+                    folderList.appendChild(li);
+                });
+            }).catch(function(error) {
+                console.error('폴더 목록 불러오기 에러:', error);
+            });
+        }
+
+        // 폴더 처리하기
+        function processFolder(folderRef) {
+            // 폴더 내 파일 목록 가져오기
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = ''; // 기존 목록 초기화
+
+            folderRef.listAll().then(function(result) {
+                result.items.forEach(function(itemRef) {
+                    const li = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = "#"; // 클릭 가능한 링크로 설정
+                    link.textContent = itemRef.name; // 파일 이름을 텍스트로 사용
+                    link.onclick = function() {
+                        processFile(itemRef); // 파일 클릭 시 처리 함수 호출
+                    };
+                    li.appendChild(link);
+                    fileList.appendChild(li);
+                });
+
+                // 폴더 제목과 파일 목록 표시
+                document.getElementById('leg').style.display = 'flex';
+                document.getElementById('folderTitle').style.display = 'block';
+                document.getElementById('folderTitle').textContent = folderRef.name;
+
+                // 그래프 숨기기
+                document.getElementById('graphCanvas').style.display = 'none';
+            }).catch(function(error) {
+                console.error('폴더 내 파일 목록 불러오기 에러:', error);
+            });
+        }
+
+        // 파일 처리하기
+        function processFile(fileRef) {
+            // 파일 다운로드 URL 가져오기
+            fileRef.getDownloadURL().then(function(url) {
+                // ZIP 파일 다운로드
+                fetch(url)
+                    .then(response => response.blob())
+                    .then(zipBlob => {
+                        // JSZip으로 압축 해제
+                        return JSZip.loadAsync(zipBlob);
+                    })
+                    .then(zip => {
+                        // 압축 해제된 파일 중 CSV 파일 찾기
+                        const csvFile = Object.values(zip.files).find(file => file.name.endsWith('.csv'));
+                        if (!csvFile) {
+                            console.error('CSV 파일을 찾을 수 없습니다.');
+                            return;
+                        }
+
+                        // CSV 파일 내용 가져오기
+                        return csvFile.async('text');
+                    })
+                    .then(csvData => {
+                        // CSV 데이터로 그래프 그리기
+                        drawGraphFromCSV(csvData);
+                    })
+                    .catch(error => {
+                        console.error('파일 처리 에러:', error);
+                    });
+            }).catch(function(error) {
+                console.error('파일 다운로드 에러:', error);
+            });
+        }
+
+        // CSV 데이터로 그래프 그리기
+        function drawGraphFromCSV(csvData) {
+            // 그래프 표시
+            document.getElementById('graphCanvas').style.display = 'block';
+
+            // 기존 그래프 파괴
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            // CSV 파싱
+            const rows = csvData.trim().split('\n');
+            const labels = [];
+            const values = [];
+
+            rows.forEach(function(row, index) {
+                // 첫 번째 행은 헤더이므로 건너뜀
+                if (index === 0) return;
+
+                const columns = row.split(',');
+                if (columns.length >= 2) {
+                    labels.push(columns[0].trim()); // 시간
+                    values.push(parseFloat(columns[1].trim())); // 온도
+                }
+            });
+
+            // 그래프 생성
+            const ctx = document.getElementById('graphCanvas').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '온도',
+                        data: values,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // 맵 초기화
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 37.5642135, lng: 127.0016985 },
+                zoom: 8
+            });
+        }
+
+        // 맵에 마커 추가
+        function addMarker(location, address) {
+            const marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                title: address
+            });
+            markers.push(marker); // 마커를 배열에 추가
+        }
+
+        // 저장된 주소를 불러와서 맵에 마커 표시
+        function loadAddresses() {
+            const storageRef = storage.ref('uploads');
+            storageRef.listAll().then(function(result) {
+                result.prefixes.forEach(function(folderRef) {
+                    const folderName = folderRef.name.replace(/_/g, ' ');
+                    addAddressMarker(folderRef.fullPath, folderName);
+                });
+            }).catch(function(error) {
+                console.error('주소 불러오기 에러:', error);
+            });
+        }
+
+        // 폴더 경로에서 주소를 가져와 맵에 마커 표시
+        function addAddressMarker(folderPath, address) {
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'address': address }, function(results, status) {
+                if (status === 'OK') {
+                    const location = results[0].geometry.location;
+                    addMarker(location, address);
+                } else {
+                    console.error('지오코딩 에러:', status);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
