@@ -1,6 +1,6 @@
 main{
     font-family: "Noto Sans KR", sans-serif;
-    width:1200px;
+    width:100%;
 }
 button{
     border:none;
@@ -65,10 +65,10 @@ button:hover{
     height:400px;
   }
   #graphCanvas{
-
     padding:0px 30px;
   }
   #graph{
+    display: flex;
     margin:30px;
     text-align: center;
     width:100%;
