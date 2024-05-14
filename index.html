@@ -32,6 +32,7 @@
         <button id="dot">o</button>
     </div>   
         <hr>
+    
         
 
         <div id="body">
@@ -47,22 +48,17 @@
                  <ul id="folderList"></ul>
             </div>
             <div id="left">
+                <h2>폴더</h2>
                 <h2 id="folderTitle" style="display:none;"></h2>
                 <ul id="fileList"></ul>
             </div>  
             
-           
         </div>
         <div id="graph">
-            <div id="graphbody">
-            <div id="buttonlist">
-            <button onclick="changeGraphType('line')">선 그래프</button>
-            <button onclick="changeGraphType('bar')">막대 그래프</button>
-            <button onclick="changeGraphType('bubble')">방울 그래프</button>
-            <button onclick="changeGraphType('doughnut')">도넛 그래프</button>
-            </div>
-            <canvas id="graphCanvas" width="1000" height="500" style="display:none;"></canvas>
+        <div id="imageContainer" >
+            <canvas id="imageCanvas" style="max-width: 100%; max-height: 100%;"></canvas>
         </div>
+         </div>
         </div>        
     <!--</div>-->
     </main>
@@ -97,7 +93,6 @@
         const storage = firebase.storage();
 
         // 전역 변수로 myChart 선언
-        let myChart;
         let map;
         let markers = [];
 
@@ -287,39 +282,56 @@
     }
 }
 
-        function processFile(fileRef) {
-            // 파일 다운로드 URL 가져오기
-            fileRef.getDownloadURL().then(function(url) {
-                // ZIP 파일 다운로드
-                fetch(url)
-                    .then(response => response.blob())
-                    .then(zipBlob => {
-                        // JSZip으로 압축 해제
-                        return JSZip.loadAsync(zipBlob);
-                    })
-                    .then(zip => {
-                        // 압축 해제된 파일 중 CSV 파일 찾기
-                        const csvFile = Object.values(zip.files).find(file => file.name.endsWith('.csv'));
-                        if (!csvFile) {
-                            console.error('CSV 파일을 찾을 수 없습니다.');
-                            return;
-                        }
+function processFile(fileRef) {
+    // 파일 다운로드 URL 가져오기
+    fileRef.getDownloadURL().then(function(url) {
+        // ZIP 파일 다운로드
+        fetch(url)
+            .then(response => response.blob())
+            .then(zipBlob => {
+                // JSZip으로 압축 해제
+                return JSZip.loadAsync(zipBlob);
+            })
+            .then(zip => {
+                // 압축 해제된 파일 중 PNG 파일 찾기
+                const imageFiles = Object.values(zip.files).filter(file => file.name.endsWith('.png'));
+                if (imageFiles.length === 0) {
+                    console.error('PNG 파일을 찾을 수 없습니다.');
+                    return;
+                }
 
-                        // CSV 파일 내용 가져오기
-                        return csvFile.async('text');
-                    })
-                    .then(csvData => {
-                        // CSV 데이터로 그래프 그리기
-                        drawGraphFromCSV(csvData);
-                    })
-                    .catch(error => {
-                        console.error('파일 처리 에러:', error);
-                    });
-            }).catch(function(error) {
-                console.error('파일 다운로드 에러:', error);
+                // 첫 번째 PNG 파일 가져오기
+                const imageFile = imageFiles[0];
+
+                // 이미지를 표시할 영역 보이게 하기
+                document.getElementById('imageContainer').style.display = 'block';
+
+                // 이미지 파일을 Blob으로 변환하고 표시
+                imageFile.async('blob').then(blob => {
+                    displayImage(blob);
+                });
+            })
+            .catch(error => {
+                console.error('파일 처리 에러:', error);
             });
-        }
+    }).catch(function(error) {
+        console.error('파일 다운로드 에러:', error);
+    });
+}
 
+// Blob으로부터 이미지 표시
+function displayImage(blob) {
+    const canvas = document.getElementById('imageCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const img = new Image();
+    img.onload = function() {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+    };
+    img.src = URL.createObjectURL(blob);
+}
         // CSV 데이터로 그래프 그리기
         function drawGraphFromCSV(csvData) {
             
