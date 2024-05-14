@@ -35,6 +35,13 @@
         
 
         <div id="body">
+            <div id="mapfolder">
+                <div id="map" style="height: 400px; width: 100%;"></div>
+            </div>
+            
+        </div>
+  
+        <div id="leg">
             <div id="list">
                 <h2>자료실</h2>
                  <ul id="folderList"></ul>
@@ -43,15 +50,7 @@
                 <h2 id="folderTitle" style="display:none;"></h2>
                 <ul id="fileList"></ul>
             </div>  
-        </div>
-        <hr>
-
-        <hr>
-        <div id="leg">
-        
-            <div id="mapfolder">
-                <div id="map" style="height: 400px; width: 100%;"></div>
-            </div>
+            
            
         </div>
         <div id="graph">
@@ -199,6 +198,7 @@
                     link.href = "#"; // 클릭 가능한 링크로 설정
                     link.textContent = itemRef.name; // 파일 이름을 텍스트로 사용
                     link.onclick = function() {
+                        
                         processFile(itemRef); // 파일 클릭 시 처리 함수 호출
                     };
                     li.appendChild(link);
@@ -322,14 +322,14 @@
 
         // CSV 데이터로 그래프 그리기
         function drawGraphFromCSV(csvData) {
+            
             // 그래프 표시
             document.getElementById('graphCanvas').style.display = 'block';
 
             // 기존 그래프 파괴
             if (myChart) {
-                if(button%2==0){
-                    myChart.destroy();
-                }
+                changeGraphType('line')
+                myChart.destroy();
             }
 
             // CSV 파싱
