@@ -1,6 +1,45 @@
 main{
     font-family: "Noto Sans KR", sans-serif;
     width:100%;
+
+}
+a{
+  text-decoration-line:none;
+  color:black;
+  transition:0.2s
+}
+a:hover{
+  color:blue;
+  transition:0.2s
+}
+#main-top{
+  filter: blur(5px);
+}
+#buttonlist{ 
+  display:inline;
+  margin:20px;
+}
+#graphbody{
+
+}
+.nonedisplay{
+  display: none;
+}
+.noneblur{
+  filter:none;
+}
+#loginbutton{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#main-head{
+  display: flex;
+  width:100vw;
+  height:100vh;
+  position:fixed;
+  justify-content: center;
+  align-items: center;
 }
 button{
     border:none;
@@ -13,13 +52,14 @@ button:hover{
     background-color:rgb(0,0,155);
 
 }
+
 #body{
     display: flex;
     justify-content: center;
     width:100%;
 }
 #mapfolder{
-    width:50%;
+    width:98%;
     margin:30px;
 }
 #map{
@@ -27,9 +67,10 @@ button:hover{
     box-shadow: 0px 0px 20px rgb(200,200,200);
 }
 #list{
+  text-align: center;
     overflow: auto;
     border-radius: 30px;
-    width:30%;
+    width:49%;
     margin:30px;
     padding:30px;
     box-shadow: 0px 0px 20px rgb(200,200,200);
@@ -58,31 +99,49 @@ button:hover{
     display: flex;
     width:100%;
   }
+  #dot{
+    display: none;
+  }
+  .flex{
+    display: flex;
+  }
   #left{
     border-radius: 30px;
     text-align: center;
     box-shadow: 0px 0px 20px rgb(200,200,200);
     margin:30px;
-    width:20%;
+    width:49%;
     padding:0px 30px;
     height:400px;
     overflow: auto;
   }
  
   #graphCanvas{
-    padding:0px 30px;
+    width:100%;
+    padding:0px;
   }
   #graph{
     border-radius: 30px;
-    display: flex;
     margin:30px;
     text-align: center;
-    width:60%;
+    width:98%;
+    display: flex;
     justify-content: center;
     align-items: center;
-    height:400px;
+    height:700px;
     box-shadow: 0px 0px 20px rgb(200,200,200);
   }
 h1{
     font-size:3vw;
+}
+#folderList{
+  text-align: left;
+  font-size:30px;
+}
+#fileList{
+  text-align: left;
+  font-size:30px;
+}
+#folderTitle{
+  margin:40px;
 }

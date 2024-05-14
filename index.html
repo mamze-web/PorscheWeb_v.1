@@ -17,12 +17,20 @@
 </head>
 <body>
     <main>
+
+        <!--<div id="loginbutton">
+            <a id="loginbutton" onclick=openkey()><button >asd</button></a>
+        </div>
+        <div id="main-top">-->
+        <div class="flex">
         <input type="file" id="fileInput" class="custom-button" onchange="updateFileName()"  style="display: none;"/>
         <label for="fileInput" class="custom-file-upload" >파일 선택</label>
         <span id="fileName"></span>
-        
+
         <button onclick="uploadFile()">업로드</button>
-            
+        <button onclick="buttoncount()">그래프 비교</button>
+        <button id="dot">o</button>
+    </div>   
         <hr>
         
 
@@ -31,26 +39,33 @@
                 <h2>자료실</h2>
                  <ul id="folderList"></ul>
             </div>
-            <div id="mapfolder">
-                <div id="map" style="height: 400px; width: 100%;"></div>
-            </div>
+            <div id="left">
+                <h1 id="folderTitle" style="display:none;"></h1>
+                <ul id="fileList"></ul>
+            </div>  
         </div>
         <hr>
 
         <hr>
         <div id="leg">
-            <div id="left">
-                <h1 id="folderTitle" style="display:none;"></h1>
-                <ul id="fileList"></ul>
-            </div>  
-            <div id="graph">
-                <button onclick="changeGraphType('line')">선 그래프</button>
-                <button onclick="changeGraphType('bar')">막대 그래프</button>
-                <button onclick="changeGraphType('bubble')">방울 그래프</button>
-                <button onclick="changeGraphType('doughnut')">도넛 그래프</button>
-                <canvas id="graphCanvas" style="display:none;" height="250" width="400"></canvas>
+        
+            <div id="mapfolder">
+                <div id="map" style="height: 400px; width: 100%;"></div>
             </div>
+           
         </div>
+        <div id="graph">
+            <div id="graphbody">
+            <div id="buttonlist">
+            <button onclick="changeGraphType('line')">선 그래프</button>
+            <button onclick="changeGraphType('bar')">막대 그래프</button>
+            <button onclick="changeGraphType('bubble')">방울 그래프</button>
+            <button onclick="changeGraphType('doughnut')">도넛 그래프</button>
+            </div>
+            <canvas id="graphCanvas" width="1000" height="500" style="display:none;"></canvas>
+        </div>
+        </div>        
+    <!--</div>-->
     </main>
     <!-- Firebase 초기화 스크립트 -->
     <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
@@ -105,10 +120,11 @@
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
             const folderName = prompt("(학교_팀) 의 양식으로 작성해주세요.");
+            const comment = prompt("메모를 남겨주세요.");
             if (folderName) { // 폴더 이름이 입력되었을 때 계속 진행
                 // 폴더 경로 설정
                 const folderPath = 'uploads/' + folderName.replace(/\s+/g, '_');
-                const storageRef = storage.ref(folderPath + '/' + file.name+'_'+formattedDate);
+                const storageRef = storage.ref(folderPath + '/' + file.name+'_'+comment+'_'+formattedDate);
                 const task = storageRef.put(file);
 
                 // 사용자가 입력한 폴더 이름을 기반으로 지오코딩하여 맵에 마커 표시
@@ -158,6 +174,19 @@
         }
 
         // 폴더 처리하기
+        button = 0;
+        function buttoncount(){
+            button=button+1;
+            if(button%2==0){
+
+                    document.getElementById('dot').style.display = 'none';
+                }
+                else if(button%2==1){
+
+                    document.getElementById('dot').style.display = 'block';
+                
+                }
+        }
         function processFolder(folderRef) {
             // 폴더 내 파일 목록 가져오기
             const fileList = document.getElementById('fileList');
@@ -182,13 +211,82 @@
                 document.getElementById('folderTitle').textContent = folderRef.name;
 
                 // 그래프 숨기기
-                document.getElementById('graphCanvas').style.display = 'none';
+                if(button%2==0){
+                    document.getElementById('graphCanvas').style.display = 'none';
+                    document.getElementById('dot').style.display = 'none';
+                }
+                else if(button%2==1){
+                    document.getElementById('graphCanvas').style.display = 'block';
+                    document.getElementById('dot').style.display = 'block';
+                
+                }
+                console.log(button)
             }).catch(function(error) {
                 console.error('폴더 내 파일 목록 불러오기 에러:', error);
             });
         }
 
         // 파일 처리하기
+        function addGraphFromCSV(csvData) {
+    // CSV 데이터 파싱
+    const rows = csvData.trim().split('\n');
+    const labels = [];
+    const datasets = [];
+
+    // 데이터셋 생성
+    rows.forEach(function(row, index) {
+        const columns = row.split(',');
+        if (index === 0) {
+            // 헤더 (첫 번째 행) 처리: 레이블 생성
+            columns.forEach(function(column, columnIndex) {
+                if (columnIndex > 0) {
+                    datasets.push({
+                        label: column.trim(), // 레이블은 CSV 파일의 두 번째 행 이후에 위치함
+                        data: [],
+                        backgroundColor: `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.1)`, // 랜덤한 색상 배경
+                        borderColor: `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`, // 랜덤한 선 색상
+                        borderWidth: 1
+                    });
+                }
+            });
+        } else {
+            // 데이터 행 처리
+            labels.push(columns[0].trim()); // 시간
+            columns.slice(1).forEach(function(value, valueIndex) {
+                datasets[valueIndex].data.push(parseFloat(value.trim())); // 데이터셋에 값 추가
+            });
+        }
+    });
+
+    // 그래프 추가
+    if (myChart) {
+        // 기존 차트가 있으면 데이터만 추가
+        datasets.forEach(function(dataset, index) {
+            myChart.data.datasets.push(dataset);
+        });
+        myChart.data.labels = labels; // 레이블 업데이트
+        myChart.update(); // 차트 업데이트
+    } else {
+        // 차트가 없으면 새로운 차트 생성
+        const ctx = document.getElementById('graphCanvas').getContext('2d');
+        myChart = new Chart(ctx, {
+            type: graphtype,
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+}
+
         function processFile(fileRef) {
             // 파일 다운로드 URL 가져오기
             fileRef.getDownloadURL().then(function(url) {
@@ -229,7 +327,9 @@
 
             // 기존 그래프 파괴
             if (myChart) {
-                myChart.destroy();
+                if(button%2==0){
+                    myChart.destroy();
+                }
             }
 
             // CSV 파싱
@@ -263,6 +363,7 @@
                     }]
                 },
                 options: {
+                    resposive: false,
                     scales: {
                         y: {
                             beginAtZero: true
@@ -284,6 +385,12 @@
                 drawGraphFromCSV(currentCSVData);
             }
         }
+        /*const loginbtn = document.getElementById("loginbutton");
+        const maintop = document.getElementById("main-top");
+        function openkey(){
+            loginbtn.classList.add('nonedisplay');
+            maintop.classList.add('noneblur');
+        }*/
 
         // 맵 초기화
         function initMap() {
