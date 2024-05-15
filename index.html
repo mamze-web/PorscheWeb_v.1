@@ -12,7 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
     <!-- Google Maps API 및 MarkerClusterer 추가 -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA-V3WQjcSSI4Nj7VxDVNQNikHpx91J_zg&libraries=places"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDz2CZvDe4dViR8sxKPoTG-mNOUu6-AMeY&libraries=places"></script>
     <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
 </head>
 <body>
@@ -22,33 +22,29 @@
             <a id="loginbutton" onclick=openkey()><button >asd</button></a>
         </div>
         <div id="main-top">-->
-        <div class="flex">
-        <input type="file" id="fileInput" class="custom-button" onchange="updateFileName()"  style="display: none;"/>
-        <label for="fileInput" class="custom-file-upload" >파일 선택</label>
-        <span id="fileName"></span>
-
-        <button onclick="uploadFile()">업로드</button>
-    </div>   
         <hr>
-    
-        
-
         <div id="body">
             <div id="mapfolder">
                 <div id="map" style="height: 400px; width: 100%;"></div>
             </div>
-            
         </div>
-  
         <div id="leg">
             <div id="list">
                 <h2>학교목록</h2>
+                <button onclick="addNewFolder() "></button>
                  <ul id="folderList"></ul>
-            </div>
+        </div>
             <div id="left">
                 <h2>폴더</h2>
-                <h2 id="folderTitle" style="display:none;"></h2>
-                <ul id="fileList"></ul>
+                <h3 id="folderTitle" style="display:none;"></h3>
+                <div id="uploadbtn" style="display:none;">
+                    <input type="file" id="fileInput" class="custom-button" onchange="uploadFile()"  style="display: none;"/>
+                    <label for="fileInput" class="custom-file-upload" >파일 선택</label>
+                    <span id="fileName"></span>
+                </div>
+                <ul id="fileList">
+                    
+                </ul>
             </div>  
             
         </div>
@@ -64,7 +60,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage-compat.js"></script>
     <script>
-        
+        const filelink = null;
         let graphtype = "line";
         const currentDate = new Date();
         const year = currentDate.getFullYear().toString().slice(-2); // 년도의 뒤에서 두 자리 가져오기
@@ -108,60 +104,86 @@
         };
 
         // 파일 업로드 함수
+        var fileaddress = null;
+        var folderaddress = null;
+        // 업로드된 폴더 목록 가져오기
+        function addNewFolder() {
+    const folderName = prompt("새로운 폴더의 이름을 입력하세요:");
+    if (folderName) {
+        const folderPath = 'uploads/' + folderName.replace(/\s+/g, '_');
+        createNewFolder(folderPath);
+        
+    }
+}
+
+// 새로운 폴더 생성 함수
+function createNewFolder(folderPath) {
+    const storageRef = storage.ref(folderPath);
+    storageRef.child('안녕하세요!'+folderPath+'!').putString('').then(() => {
+        console.log('새로운 폴더가 성공적으로 생성되었습니다.');
+        // 저장된 주소를 불러와서 맵에 마커 표시
+        // 업로드된 폴더 목록 다시 불러오기
+        
+        getFolderList();
+    }).catch(error => {
+        console.error('새로운 폴더 생성 에러:', error);
+    });
+}
+
+// 업로드된 폴더 목록 가져오기
+function getFolderList() {
+    const folderList = document.getElementById('folderList');
+    folderList.innerHTML = ''; // 기존 목록 초기화
+
+    const storageRef = storage.ref('uploads');
+    storageRef.listAll().then(function(result) {
+        result.prefixes.forEach(function(folderRef) {
+            const li = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = "#"; // 클릭 가능한 링크로 설정
+            link.textContent = folderRef.name; // 폴더 이름을 텍스트로 사용
+            link.onclick = function() {
+                processFolder(folderRef); // 폴더 클릭 시 처리 함수 호출
+                folderaddress = folderRef.name;
+                fileaddress = folderRef;
+            };
+            li.appendChild(link);
+            folderList.appendChild(li);
+        });
+    }).catch(function(error) {
+        console.error('폴더 목록 불러오기 에러:', error);
+    });
+}
+ 
+        
         function uploadFile() {
+            
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
-            const folderName = prompt("(학교_팀) 의 양식으로 작성해주세요.");
             const comment = prompt("메모를 남겨주세요.");
-            if (folderName) { // 폴더 이름이 입력되었을 때 계속 진행
-                // 폴더 경로 설정
-                const folderPath = 'uploads/' + folderName.replace(/\s+/g, '_');
-                const storageRef = storage.ref(folderPath + '/' + file.name+'_'+comment+'_'+formattedDate);
-                const task = storageRef.put(file);
+            const folderPath =  'uploads/' + folderaddress.replace(/\s+/g, '_');
+            const storageRef = storage.ref(folderPath + '/' + file.name+'_'+comment+'_'+formattedDate);
+            const task = storageRef.put(file);
+            fileInput.value = ''; // 파일 입력란 초기화
 
-                // 사용자가 입력한 폴더 이름을 기반으로 지오코딩하여 맵에 마커 표시
-                const geocoder = new google.maps.Geocoder();
-                geocoder.geocode({ 'address': folderName }, function(results, status) {
-                    if (status === 'OK') {
-                        const location = results[0].geometry.location;
-                        addMarker(location, folderName);
-                    } else {
-                        console.error('지오코딩 에러:', status);
-                    }
-                });
+            processFolder(fileaddress);
+            // 사용자가 입력한 폴더 이름을 기반으로 지오코딩하여 맵에 마커 표시
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'address': folderName }, function(results, status) {
+                if (status === 'OK') {
+                    const location = results[0].geometry.location;
+                    addMarker(location, folderName);
+                } else {
+                    console.error('지오코딩 에러:', status);
+                }
+            });
 
-                task.then(snapshot => {
-                    console.log('파일 업로드 완료');
-                    // 업로드된 폴더 목록 다시 불러오기
-                    getFolderList();
-                }).catch(error => {
-                    console.error('파일 업로드 에러:', error);
-                });
-            } else {
-                console.log("폴더 이름을 입력하지 않았습니다.");
-            }
-        }
-
-        // 업로드된 폴더 목록 가져오기
-        function getFolderList() {
-            const folderList = document.getElementById('folderList');
-            folderList.innerHTML = ''; // 기존 목록 초기화
-
-            const storageRef = storage.ref('uploads');
-            storageRef.listAll().then(function(result) {
-                result.prefixes.forEach(function(folderRef) {
-                    const li = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.href = "#"; // 클릭 가능한 링크로 설정
-                    link.textContent = folderRef.name; // 폴더 이름을 텍스트로 사용
-                    link.onclick = function() {
-                        processFolder(folderRef); // 폴더 클릭 시 처리 함수 호출
-                    };
-                    li.appendChild(link);
-                    folderList.appendChild(li);
-                });
-            }).catch(function(error) {
-                console.error('폴더 목록 불러오기 에러:', error);
+            task.then(snapshot => {
+                console.log('파일 업로드 완료');
+                // 업로드된 폴더 목록 다시 불러오기
+                getFolderList();
+            }).catch(error => {
+                console.error('파일 업로드 에러:', error);
             });
         }
 
@@ -201,6 +223,7 @@
                 // 폴더 제목과 파일 목록 표시
                 document.getElementById('leg').style.display = 'flex';
                 document.getElementById('folderTitle').style.display = 'block';
+                document.getElementById('uploadbtn').style.display = 'block';
                 document.getElementById('folderTitle').textContent = folderRef.name;
 
                 // 그래프 숨기기
@@ -220,6 +243,10 @@
         }
 
         // 파일 처리하기
+        function sleep(ms) {
+  const wakeUpTime = Date.now() + ms;
+  while (Date.now() < wakeUpTime) {}
+}
         function addGraphFromCSV(csvData) {
     // CSV 데이터 파싱
     const rows = csvData.trim().split('\n');
