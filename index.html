@@ -29,24 +29,24 @@
             </div>
         </div>
         <div id="leg">
-            <div id="list">
-                <h2>학교목록</h2>
-                <button onclick="addNewFolder() "></button>
-                 <ul id="folderList"></ul>
-        </div>
-            <div id="left">
-                <h2>폴더</h2>
-                <h3 id="folderTitle" style="display:none;"></h3>
-                <div id="uploadbtn" style="display:none;">
-                    <input type="file" id="fileInput" class="custom-button" onchange="uploadFile()"  style="display: none;"/>
-                    <label for="fileInput" class="custom-file-upload" >파일 선택</label>
-                    <span id="fileName"></span>
-                </div>
-                <ul id="fileList">
-                    
-                </ul>
-            </div>  
+            <div id="folderaddressbar">학교목록 > </div>
+            <div id="line"></div>
             
+            <div id="flex">
+            <div id="list">
+                <button onclick="addNewFolder() ">학교 추가하기</button>
+                 <ul id="folderList"></ul>
+            </div>
+                <div id="left">
+                    <h3 id="folderTitle" style="display:none;"></h3>
+                    <div id="uploadbtn" style="display:none;">
+                        <input type="file" id="fileInput" class="custom-button" onchange="uploadFile()"  style="display: none;"/>
+                        <label for="fileInput" class="custom-file-upload" >파일 선택</label>
+                        <span id="fileName"></span>
+                    </div>
+                    <ul id="fileList"></ul>
+                </div>  
+        </div>
         </div>
         <div id="graph">
         <div id="imageContainer" >
@@ -101,16 +101,17 @@
             initMap();
             // 저장된 주소를 불러와서 맵에 마커 표시
             loadAddresses();
+            sort();
         };
 
         // 파일 업로드 함수
-        var fileaddress = null;
-        var folderaddress = null;
+        let fileaddress = null;
+        let folderaddress = null;
         // 업로드된 폴더 목록 가져오기
         function addNewFolder() {
-    const folderName = prompt("새로운 폴더의 이름을 입력하세요:");
+    let folderNamae = prompt("새로운 폴더의 이름을 입력하세요:");
     if (folderName) {
-        const folderPath = 'uploads/' + folderName.replace(/\s+/g, '_');
+        const folderPath = 'uploads/' + folderNamae.replace(/\s+/g, '_');
         createNewFolder(folderPath);
         
     }
@@ -146,6 +147,8 @@ function getFolderList() {
                 processFolder(folderRef); // 폴더 클릭 시 처리 함수 호출
                 folderaddress = folderRef.name;
                 fileaddress = folderRef;
+                document.getElementById('left').style.display = 'block';
+                folderaddressreal(folderRef);
             };
             li.appendChild(link);
             folderList.appendChild(li);
@@ -154,19 +157,25 @@ function getFolderList() {
         console.error('폴더 목록 불러오기 에러:', error);
     });
 }
- 
-        
+let sel=document.getElementById("folderaddressbar");
+function folderaddressreal(folderRef) {
+
+sel.innerHTML='<span id="addressbar" onclick=displaynone()>학교목록 > </span>'+folderRef.name;
+}   
+        function displaynone(){
+            document.getElementById('left').style.display = 'none';
+            sel.innerHTML='<span id="addressbar" onclick=displaynone()>학교목록 >';
+        }
         function uploadFile() {
             
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
             const comment = prompt("메모를 남겨주세요.");
             const folderPath =  'uploads/' + folderaddress.replace(/\s+/g, '_');
-            const storageRef = storage.ref(folderPath + '/' + file.name+'_'+comment+'_'+formattedDate);
+            const storageRef = storage.ref(folderPath + '/' + file.name+'_'+comment+'_'+formattedDate+'.zip');
             const task = storageRef.put(file);
             fileInput.value = ''; // 파일 입력란 초기화
-
-            processFolder(fileaddress);
+            fileList.innerHTML = ''; // 기존 목록 초기화
             // 사용자가 입력한 폴더 이름을 기반으로 지오코딩하여 맵에 마커 표시
             const geocoder = new google.maps.Geocoder();
             geocoder.geocode({ 'address': folderName }, function(results, status) {
@@ -179,6 +188,8 @@ function getFolderList() {
             });
 
             task.then(snapshot => {
+                folderRef = fileaddress;
+                processFolder(folderRef);
                 console.log('파일 업로드 완료');
                 // 업로드된 폴더 목록 다시 불러오기
                 getFolderList();
@@ -202,45 +213,45 @@ function getFolderList() {
                 }
         }
         function processFolder(folderRef) {
-            // 폴더 내 파일 목록 가져오기
-            const fileList = document.getElementById('fileList');
-            fileList.innerHTML = ''; // 기존 목록 초기화
+    const fileList = document.getElementById('fileList');
+    fileList.innerHTML = ''; // 기존 목록 초기화
 
-            folderRef.listAll().then(function(result) {
-                result.items.forEach(function(itemRef) {
-                    const li = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.href = "#"; // 클릭 가능한 링크로 설정
-                    link.textContent = itemRef.name; // 파일 이름을 텍스트로 사용
-                    link.onclick = function() {
-                        
-                        processFile(itemRef); // 파일 클릭 시 처리 함수 호출
-                    };
-                    li.appendChild(link);
-                    fileList.appendChild(li);
-                });
+    folderRef.listAll().then(function(result) {
+        // 모든 파일의 메타데이터를 가져오기
+        const promises = result.items.map(itemRef => itemRef.getMetadata().then(metadata => ({ itemRef, timeCreated: new Date(metadata.timeCreated) })));
 
-                // 폴더 제목과 파일 목록 표시
-                document.getElementById('leg').style.display = 'flex';
-                document.getElementById('folderTitle').style.display = 'block';
-                document.getElementById('uploadbtn').style.display = 'block';
-                document.getElementById('folderTitle').textContent = folderRef.name;
+        Promise.all(promises).then(filesWithMetadata => {
+            // 업로드 날짜를 기준으로 내림차순 정렬
+            filesWithMetadata.sort((a, b) => b.timeCreated - a.timeCreated);
 
-                // 그래프 숨기기
-                if(button%2==0){
-                    document.getElementById('graphCanvas').style.display = 'none';
-                    document.getElementById('dot').style.display = 'none';
-                }
-                else if(button%2==1){
-                    document.getElementById('graphCanvas').style.display = 'block';
-                    document.getElementById('dot').style.display = 'block';
-                
-                }
-                console.log(button)
-            }).catch(function(error) {
-                console.error('폴더 내 파일 목록 불러오기 에러:', error);
+            // 정렬된 파일 목록을 표시
+            filesWithMetadata.forEach(({ itemRef }) => {
+                const li = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = "#"; // 클릭 가능한 링크로 설정
+                link.textContent = itemRef.name; // 파일 이름을 텍스트로 사용
+                link.onclick = function() {
+                    processFile(itemRef); // 파일 클릭 시 처리 함수 호출
+                    document.getElementById('folderaddressbar').innerHTML = '<span id="addressbar" onclick=displaynone()>학교목록 > </span>' + folderRef.name + ' > ' + itemRef.name;
+                };
+                li.appendChild(link);
+                fileList.appendChild(li);
             });
-        }
+
+            // 폴더 제목과 파일 목록 표시
+            document.getElementById('folderTitle').style.display = 'block';
+            document.getElementById('uploadbtn').style.display = 'block';
+            document.getElementById('folderTitle').textContent = folderRef.name;
+
+        }).catch(error => {
+            console.error('파일 메타데이터 가져오기 에러:', error);
+        });
+    }).catch(function(error) {
+        console.error('폴더 내 파일 목록 불러오기 에러:', error);
+    });
+}
+
+
 
         // 파일 처리하기
         function sleep(ms) {
@@ -454,7 +465,7 @@ function displayImage(blob) {
                 origin: new google.maps.Point(0, 0), // 이미지의 원점 설정
                 anchor: new google.maps.Point(25, 25) // 이미지의 중심점 설정
             }
-        
+       
         
             });
             // 마커 클릭 이벤트 설정
@@ -482,17 +493,19 @@ marker.addListener('click', function() {
         }
 
         // 저장된 주소를 불러와서 맵에 마커 표시
+        let folderName = null;
         function loadAddresses() {
-            const storageRef = storage.ref('uploads');
-            storageRef.listAll().then(function(result) {
-                result.prefixes.forEach(function(folderRef) {
-                    const folderName = folderRef.name.replace(/_/g, ' ');
-                    addAddressMarker(folderRef.fullPath, folderName);
-                });
-            }).catch(function(error) {
-                console.error('주소 불러오기 에러:', error);
-            });
-        }
+    const storageRef = storage.ref('uploads');
+    storageRef.listAll().then(function(result) {
+        result.prefixes.forEach(function(folderRef) {
+            const address = folderRef.name.replace(/_/g, ' ');
+            folderName = address; // folderName 값 설정
+            addAddressMarker(folderRef.fullPath, address);
+        });
+    }).catch(function(error) {
+        console.error('주소 불러오기 에러:', error);
+    });
+}
 
         // 폴더 경로에서 주소를 가져와 맵에 마커 표시
         function addAddressMarker(folderPath, address) {

@@ -80,10 +80,21 @@ li{
   font-size:15px;
 }
 #leg{
-  
   margin:30px;
   border-radius: 30px;
   box-shadow: 0px 0px 20px rgb(200,200,200);
+  display: block;
+}
+#folderaddressbar{
+  padding:20px;
+  
+}
+#addressbar{
+  cursor:pointer;
+}
+
+#flex{
+  margin:30px;
   justify-content: center;
   align-items: center;
   height:400px;
@@ -91,6 +102,7 @@ li{
   width:100%;
 }
 #left{
+  display: none;
   border-radius: 30px;
   text-align: center;
   margin:30px;
@@ -128,7 +140,9 @@ li{
     border-style: none; /* 이미지 테두리 스타일 제거 */
     outline: none; /* 이미지 클릭 시 나타나는 외곽선 제거 */
 }
- 
+#line{
+  border-top:1px solid black;
+}
 
  #imageContainer{
   margin-top:30px;
