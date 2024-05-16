@@ -148,6 +148,7 @@ function getFolderList() {
                 folderaddress = folderRef.name;
                 fileaddress = folderRef;
                 document.getElementById('left').style.display = 'block';
+                
                 folderaddressreal(folderRef);
             };
             li.appendChild(link);
@@ -468,19 +469,18 @@ function displayImage(blob) {
        
         
             });
-            // 마커 클릭 이벤트 설정
-marker.addListener('click', function() {
-    // 마커의 위치를 이용하여 지오코딩
-    geocodeMarker(marker.getPosition(), function(address) {
-        // 인포윈도우 생성
-        const infowindow = new google.maps.InfoWindow({
-            content: folderName
-        });
-        // 클릭한 마커 위에 인포윈도우 표시
-        infowindow.open(map, marker);
-    });
-});
+            marker.addListener('click', function() {
+    // 마커의 주소 가져오기
+    const markerAddress = marker.getTitle();
 
+    // 인포윈도우 생성
+    const infowindow = new google.maps.InfoWindow({
+        content: markerAddress
+    });
+
+    // 클릭한 마커 위에 인포윈도우 표시
+    infowindow.open(map, marker);
+});
 // 마커 위치로부터 주소를 지오코딩하는 함수
 
 
