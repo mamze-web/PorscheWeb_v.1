@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Styled Maps - Night Mode</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+    <script src="./index.js"></script>
+  </head>
+  <body>
+    <div id="main">
+        <div id="head">
+            <div id="map"></div>
+            <div id="folder">
+                <ul id="folderList"></ul>
+            </div>
+        </div>
+        <div id="body">
+            <div id="dataset1"></div>
+            <div id="dataset2"></div>
+            <div id="dataset3"></div>
+        </div>
+    </div>
+    <script>
+      let lat=37.5642135
+      let lng=127.0016985
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+               center: {lat: lat, lng:  lng},
+          zoom: 5,
+          styles:[
+  {
+    "stylers": [
+      {
+        "color": "#a8c6fe"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative",
+    "stylers": [
+      {
+        "color": "#ffffff"
+      },
+      {
+        "saturation": -100
+      },
+      {
+        "visibility": "simplified"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "stylers": [
+      {
+        "color": "#9dbaf0"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "stylers": [
+      {
+        "color": "#d4e3fe"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "stylers": [
+      {
+        "color": "#ffffff"
+      }
+    ]
+  }
+]})}
+
+
+    </script>
+          <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage-compat.js"></script>
+      <script src="https://maps.google.com/maps/api/js?key=AIzaSyDz2CZvDe4dViR8sxKPoTG-mNOUu6-AMeY&callback=initMap" type="text/javascript" async defer></script>
+  </body>
+</html>

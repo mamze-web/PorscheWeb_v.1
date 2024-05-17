@@ -1,6 +1,102 @@
 main{
     font-family: "Noto Sans KR", sans-serif;
-    width:100%;
+    width:1200px;
+    height:986px;
+    display: flex;
+    justify-content: center;
+    border:10px solid red;
+    position: relative;
+    overflow: hidden;
+    background-color:rgb(230,230,230);
+}
+none{
+  display: none;
+}
+#line{
+  border-top:1px white solid;
+}
+hr{
+  color:rgba(204, 199, 199, 0.6);
+  margin:0px 10%;
+}
+.leftThing:hover{
+  left:0%;
+  transition:0.5s;
+  ~.blur{
+    filter:blur(3px);
+    transition:0.5s;
+  }
+}
+.blur{
+  width:100%;
+  transition:0.5s;
+}
+#right_info{
+ 
+}
+
+.right_info_moved{
+  background-color:white;
+}
+.leftThing{
+  z-index: 1;
+text-align: right;
+  font-size: 1%;
+  width:30%;
+  height:100%;
+  background-color:black;
+  position:absolute;
+  color:white;
+  top:0;
+  left:-28%;
+  transition:0.5s;
+}
+#rightThing{
+  width:100%;
+  display: flex;
+  justify-content: space-around;
+}
+#notopenwindow{
+  display:flex;
+  justify-content: right;
+  align-items: center;
+  right:0;
+  height:100%;
+}
+#searchimg{
+  filter:invert();
+  width:20px;
+  height:20px;
+  margin-left:2%;
+}
+#searchzip{
+  display: flex;
+  margin:40px 40px 10px 40px;
+}
+#search{
+  background-color:transparent;
+  border:none;
+  margin-left:3%;
+  font-size:20px;
+  color:white;
+}
+#search:active{
+  border:none;
+}
+.honeycomb{
+  margin-left:20px;
+  width:100px;
+  margin-right:20px;
+}
+#honeycombtext{
+  align-items: center;
+  font-size:20px;
+  font-weight: bold;
+  text-align: right;
+  display: flex;
+  position:absolute;
+  bottom:20px;
+  left:0;
 }
 a{
   text-decoration-line:none;
@@ -11,172 +107,8 @@ a:hover{
   color:blue;
   transition:0.2s
 }
-#main-top{
-  filter: blur(5px);
-}
-#buttonlist{ 
-  display:inline;
-  margin:20px;
-}
-#graphbody{
-
-}
-.nonedisplay{
-  display: none;
-}
-.noneblur{
-  filter:none;
-}
-#loginbutton{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#main-head{
-  display: flex;
-  width:100vw;
-  height:100vh;
-  position:fixed;
-  justify-content: center;
-  align-items: center;
-}
-button{
-    border:none;
-    color:white;
-    background-color:blue;
-    padding:10px;
-    border-radius: 30px;
-}
-button:hover{
-    background-color:rgb(0,0,155);
-
-}
-
-#body{
-    display: flex;
-    justify-content: center;
-    width:100%;
-}
-#mapfolder{
-    width:98%;
-    margin:30px;
-}
 #map{
-    border-radius: 30px;
-    box-shadow: 0px 0px 20px rgb(200,200,200);
-}
-
-#list{
-  
-  text-align: center;
-
-  margin:30px;
-  width:49%;
-  padding:0px 30px;
-  height:100%;
-  overflow: auto;
-}
-li{
-  font-size:15px;
-}
-#leg{
-  margin:30px;
-  border-radius: 30px;
-  box-shadow: 0px 0px 20px rgb(200,200,200);
-  display: block;
-}
-#folderaddressbar{
-  padding:20px;
-  
-}
-#addressbar{
-  cursor:pointer;
-}
-
-#flex{
-  margin:30px;
-  justify-content: center;
-  align-items: center;
-  height:400px;
-  display: flex;
   width:100%;
-}
-#left{
-  display: none;
-  border-radius: 30px;
-  text-align: center;
-  margin:30px;
-  width:49%;
-  padding:0px 30px;
   height:100%;
-  overflow: auto;
-}
-.custom-file-upload {
-    display: inline-block;
-    padding:10px;
-    cursor: pointer;
-    background-color: blue;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    font-size: 10px;
-  }
-  
-  .custom-file-upload:hover {
-    background-color:rgb(0,0,155);
-  }
-  
-  #fileName {
-    margin-left: 10px;
-  }
-  
-  #dot{
-    display: none;
-  }
-  .flex{
-    display: flex;
-  }
-  img {
-    border-style: none; /* 이미지 테두리 스타일 제거 */
-    outline: none; /* 이미지 클릭 시 나타나는 외곽선 제거 */
-}
-#line{
-  border-top:1px solid black;
-}
-
- #imageContainer{
-  margin-top:30px;
-  width:98%;
-  height:400px;
-  box-shadow: 0px 0px 20px rgb(200,200,200);
-  border-radius: 30px;
-  display: block;
-
- }
-
-  #graphCanvas{
-    width:800px;
-    height:550px;
-    padding:0px;
-  }
-  #graph{
-    margin:30px;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-h1{
-    font-size:3vw;
-}
-#folderList{
-  text-align: left;
-  font-size:20px;
-}
-#fileList{
-  text-align: left;
-  font-size:20px;
-}
-#folderTitle{
-  margin:40px;
+  background-color:white;
 }
