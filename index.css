@@ -1,16 +1,13 @@
 main{
     font-family: "Noto Sans KR", sans-serif;
-    width:1200px;
-    height:786px;
+    width:792px;
+    height:535px;
     display: flex;
     justify-content: center;
     border:10px solid red;
     position: relative;
     overflow: hidden;
     background-color:rgb(230,230,230);
-}
-none{
-  display: none;
 }
 #file-list{
   color:white;
@@ -147,7 +144,7 @@ h1{
 #folder-list{
   margin:0;
   padding:0;
-  overflow: ;
+  overflow: auto;
 }
 li{
   border-bottom:1px white solid;
