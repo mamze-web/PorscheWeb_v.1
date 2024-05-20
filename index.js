@@ -28,7 +28,6 @@ const storage = firebase.storage();
 let markers = [];
 
 // 마커 클러스터러 생성
-let markerCluster;
 
 // 페이지 로드시 실행
 window.onload = function() {
@@ -439,7 +438,7 @@ infowindow.open(map, marker);
     markers.push(marker); // 마커를 배열에 추가
 
     // 클러스터러에 마커 추가
-    markerCluster.addMarker(marker);
+
 }
 
 // 저장된 주소를 불러와서 맵에 마커 표시

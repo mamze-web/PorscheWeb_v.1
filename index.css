@@ -12,6 +12,16 @@ main{
 none{
   display: none;
 }
+#addwindow{
+  z-index: 0;
+  display: block;
+  width:30%;
+  left:105%;
+  height:98%;
+  top:0;
+  position:absolute;
+  background-color:black;
+}
 #line{
   border-top:1px white solid;
 }
@@ -19,14 +29,15 @@ hr{
   color:rgba(204, 199, 199, 0.6);
   margin:0px 10%;
 }
-.leftThing:hover{
-  left:0%;
+.leftThing-click{
+  left:0% !important;
   transition:0.5s;
   ~.blur{
     filter:blur(3px);
     transition:0.5s;
   }
 }
+
 .blur{
   width:100%;
   transition:0.5s;
@@ -38,7 +49,10 @@ hr{
 .right_info_moved{
   background-color:white;
 }
-.leftThing{
+.leftwow{
+  width:10%;
+}
+#leftThing{
   z-index: 1;
 text-align: right;
   font-size: 1%;
@@ -48,9 +62,26 @@ text-align: right;
   position:absolute;
   color:white;
   top:0;
-  left:-28%;
+  left:-30%;
   transition:0.5s;
 }
+#secondwindow{
+  width: 100%;
+  height:70%;
+  position: absolute;
+  background-color:black;
+  visibility: hidden;
+  opacity: 0;
+  left:105%;
+  top:15%;
+  transition:0.5s;
+}
+.secondwindow-click{
+  
+  opacity: 1 !important;
+  visibility:visible !important;
+}
+
 #rightThing{
   width:100%;
   display: flex;
@@ -83,6 +114,45 @@ text-align: right;
 #search:active{
   border:none;
 }
+#clickarrow{
+  margin-top:3%;
+  position:absolute;
+  left:95%;
+  background-color:black;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  width:15%;
+  height:7%;
+  border-radius: 6px;
+  color:white;
+}
+#arrow{
+  font-size: 30px;
+  margin-right:10px;
+}
+#folderList{
+  padding:0;
+}
+li{
+  border:1px white solid;
+  display: flex;
+  align-items: center;
+  margin:10% 5% 10% 5%;
+  height:100px;
+  color:white;
+  list-style: none;
+}
+a{
+  text-decoration-line:none;
+  transition:0.2s;
+  color:white;
+}
+a:hover{
+  color:blue;
+  transition:0.2s
+}
 .honeycomb{
   margin-left:20px;
   width:100px;
@@ -98,15 +168,7 @@ text-align: right;
   bottom:20px;
   left:0;
 }
-a{
-  text-decoration-line:none;
-  color:black;
-  transition:0.2s
-}
-a:hover{
-  color:blue;
-  transition:0.2s
-}
+
 #map{
   width:100%;
   height:100%;
