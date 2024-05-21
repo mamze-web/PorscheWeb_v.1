@@ -2,16 +2,13 @@
   main{
     font-family: "Noto Sans KR", sans-serif;
     width:100%px;
-    height:px;
+    height:1080px;
     display: flex;
     justify-content: center;
     border:10px solid red;
     position: relative;
     overflow: hidden;
     background-color:rgb(230,230,230);
-}
-body{
-  overflow: hidden;
 }
 #file-list{
   color:white;
