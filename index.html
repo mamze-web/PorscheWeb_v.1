@@ -17,10 +17,15 @@
 </head>
 <body>
     <main>
-       
+      <div id="addFolderDisplay">
+        <input type="text" id="folderNameInput" placeholder="Enter folder name">
+        <button onclick="uploadFile()">Upload</button>
+        <span id="closedWindow" onclick="closedWindow()">X</span>
+      </div>
+      <div id="file-list"></div>
         <div id="leftThing" > 
             <div id="secondwindow">
-              <div id="filelist"></div>
+              
             </div>
             <div id="clickarrow"onclick="leftThing()">
                 <span id="arrow">></span>
@@ -37,6 +42,7 @@
                 <div class="folderZip">
                 <ul id="folder-list"></ul>
                 </div>
+                <button id="addschool" onclick="addschool()">학교추가</button>
                 </div>
                 </div>
                 <div id="honeycombtext">
@@ -98,7 +104,7 @@
 
             try {
                 const res = await storageRef.listAll();
-                
+                folderList.innerHTML = '';
                 res.prefixes.forEach((folderRef) => {
                     const li = document.createElement('li');
                     li.textContent = folderRef.name;
@@ -116,45 +122,43 @@
             alert(`You clicked on folder: ${folderRef}`);
             // 여기에 원하는 기능을 추가하십시오.
         };}
+        async function uploadFile() {
+          
+      const folderName = document.getElementById('folderNameInput').value;
+      if (!folderName) {
+        alert('Please enter a folder name.');
+        return;
+      }
 
-      const listFiles = async (folderRef) => {
-    const fileList = document.getElementById('filelist');
-    const storageRef = storage.ref().child('uploads/' + folderRef.name); // uploads 폴더 경로
+      const fileName = 'sample.txt';
+      const fileContent = 'This is a sample file content.';
 
-    try {
-        const res = await storageRef.listAll();
-        // 파일 목록 출력
-        res.items.forEach((fileRef) => {
-            console.log('File:', fileRef.name);
-            const li = document.createElement('li');
-            li.textContent = fileRef.name;
-            fileList.appendChild(li);
-        });
-    } catch (error) {
-        console.error('Error listing files:', error);
+      // Create a Blob from the file content
+      const blob = new Blob([fileContent], { type: 'text/plain' });
+
+      // Create a reference to the file in the specified folder
+      const storageRef = storage.ref().child(`uploads/${folderName}/${fileName}`);
+
+      // Upload the file
+      try {
+        await storageRef.put(blob);
+        addFolderDisplay.classList.toggle('addFolderDisplay-click')
+        console.log('File uploaded successfully.');
+        // Refresh the folder list after upload
+        listFolders();
+      } catch (error) {
+        console.error('Upload failed:', error);
+      }
     }
-};
-function ListFiles(folderRef){
-  const fileList = document.getElementById('filelist');
-  const storageRef = storage.ref().child
-}
-        function sortFolderList(searchValue) {
-    const folderList = document.getElementById('folder-list');
-    const folders = folderList.getElementsByTagName('li');
+    listFolders();
 
-    for (let i = 0; i < folders.length; i++) {
-        const folder = folders[i];
-        const folderName = folder.textContent || folder.innerText;
-        
-        // 검색어가 폴더 이름에 포함되어 있는지 확인
-        if (folderName.includes(searchValue)) {
-            // 매칭되는 폴더를 맨 위로 이동
-            folderList.insertBefore(folder, folderList.firstChild);
-            let geocoder = new google.maps.Geocoder();
-            }
-    }
+function addschool(){
+  let addFolderDisplay = document.getElementById('addFolderDisplay');
+  addFolderDisplay.classList.toggle('addFolderDisplay-click')
 }
-
+function closedWindow(){
+  addFolderDisplay.classList.toggle('addFolderDisplay-click')
+}
 function searchAddress(){
   const searchInput = document.getElementById("search");
     const searchValue = searchInput.value.trim(); // 공백 제거
@@ -173,7 +177,21 @@ function searchAddress(){
         }
     });
 }
+function sortFolderList(searchValue) {
+    const folderList = document.getElementById('folder-list');
+    const folders = folderList.getElementsByTagName('li');
 
+    for (let i = 0; i < folders.length; i++) {
+        const folder = folders[i];
+        const folderName = folder.textContent || folder.innerText;
+        
+        // 검색어가 폴더 이름에 포함되어 있는지 확인
+        if (folderName.includes(searchValue)) {
+            // 매칭되는 폴더를 맨 위로 이동
+            folderList.insertBefore(folder, folderList.firstChild);
+        }
+    }
+}
 function searchAddressfromFolder(folderRef){
     let geocoder = new google.maps.Geocoder();
     geocoder.geocode({ 'address': folderRef.name }, function(results, status) {

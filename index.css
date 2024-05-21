@@ -13,6 +13,23 @@
 #file-list{
   color:white;
 }
+#addFolderDisplay{
+  z-index:3;
+  width:700px;
+  height:40%;
+  position: absolute;
+  bottom:30%;
+  background-color: black;
+  visibility: hidden;
+  opacity: 0;
+  transition:(0.5s);
+}
+.addFolderDisplay-click{
+  visibility: visible !important;
+  opacity: 1 !important;
+  transition:(0.5s);
+}
+
 li{
   color:white;
 }
@@ -22,6 +39,7 @@ li{
   height:100px;
   background-color:black;
 }
+
 #addwindow{
   z-index: 0;
   display: block;
@@ -99,6 +117,7 @@ h1{
 #folder{
   display: flex;
   justify-content: center;
+  margin-top:30px;
 }
 #rightThing{
   width:100%;
@@ -148,8 +167,17 @@ h1{
   font-size: 30px;
   margin-right:10px;
 }
+#addschool{
+  background-color:rgb(255,217,102);
+  border: none;
+  width:50%;
+  height:70px;
+  border-radius: 10px;
+  font-size:25px;
+  color: grey;
+  font-weight: bold;
+}
 #folder-list{
-  margin:0;
   padding:0;
 }
 .folderZip{
@@ -157,10 +185,11 @@ h1{
   width:80%;
   height:50%;
   position: absolute;
-  margin:10%;
+  margin:90px;
   border-radius: 10px;
   background-color: rgb(40,40,40);
 }
+
 ::-webkit-scrollbar{
   width:100%;
 }
