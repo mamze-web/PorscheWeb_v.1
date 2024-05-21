@@ -156,7 +156,7 @@
 function iframeload(){
   window.addEventListener("message", function(message){
     alert(message.data);
-    window.parent.postMessage(text);
+    window.parent.postMessage(message.data);
   })
   
 }
