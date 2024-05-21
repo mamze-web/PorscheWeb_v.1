@@ -17,11 +17,14 @@
 </head>
 <body>
     <main>
+     
       <div id="addFolderDisplay">
+        <div id="zip">
         <input type="text" id="folderNameInput" placeholder="Enter folder name">
         <button onclick="uploadFile()">Upload</button>
         <span id="closedWindow" onclick="closedWindow()">X</span>
       </div>
+    </div>
       <div id="file-list"></div>
         <div id="leftThing" > 
             <div id="secondwindow">
@@ -32,6 +35,7 @@
             </div>
             <div id="openwindow" >
                 <div>
+                  <button id="addschool" onclick="addschool()">학교추가</button>
                 <div id="searchzip">
                 <img id="searchimg" src="https://firebasestorage.googleapis.com/v0/b/macband-cf215.appspot.com/o/Mac%20photo%2Fsearch-interface-symbol.png?alt=media&token=a2fe1515-97b0-414f-9900-26280b475c19">
                 <input id="search" type="text"  placeholder="주소를 검색하세요." onchange="searchAddress()">
@@ -42,7 +46,7 @@
                 <div class="folderZip">
                 <ul id="folder-list"></ul>
                 </div>
-                <button id="addschool" onclick="addschool()">학교추가</button>
+                
                 </div>
                 </div>
                 <div id="honeycombtext">
@@ -54,8 +58,7 @@
             
                
            
-        </div>
-     
+       
    
         <div id="addwindow">
         </div>
@@ -124,7 +127,8 @@
             // 여기에 원하는 기능을 추가하십시오.
         };}
         async function uploadFile() {
-          
+        
+
       const folderName = document.getElementById('folderNameInput').value;
       if (!folderName) {
         alert('Please enter a folder name.');
@@ -162,8 +166,10 @@ function iframeload(){
 }
 
 function addschool(){
+  let bigblur = document.getElementById('bigblur')
   let addFolderDisplay = document.getElementById('addFolderDisplay');
   addFolderDisplay.classList.toggle('addFolderDisplay-click')
+  bigblur.classList.toggle('bigblur-blur')
 }
 function closedWindow(){
   addFolderDisplay.classList.toggle('addFolderDisplay-click')
