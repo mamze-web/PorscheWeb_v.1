@@ -156,7 +156,9 @@
 function iframeload(){
   window.addEventListener("message", function(message){
     alert(message.data);
+    window.parent.postMessage(text);
   })
+  
 }
 
 function addschool(){
