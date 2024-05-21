@@ -81,6 +81,7 @@
         window.onload = function() {
             // 업로드된 폴더 목록 가져오기
             // 맵 초기화
+            iframeload();
             initMap();
             listFolders();
 
@@ -152,10 +153,9 @@
     }
     listFolders();
 
-if(parent){
+function iframeload(){
   window.addEventListener("message", function(message){
-    $("fromParentDiv").text(message.data);
-    console.log(message.data);
+    alert(message.data);
   })
 }
 
