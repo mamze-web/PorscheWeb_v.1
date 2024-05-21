@@ -152,6 +152,13 @@
     }
     listFolders();
 
+if(parent){
+  window.addEventListener("message", function(message){
+    $("fromParentDiv").text(message.data);
+    console.log(message.data);
+  })
+}
+
 function addschool(){
   let addFolderDisplay = document.getElementById('addFolderDisplay');
   addFolderDisplay.classList.toggle('addFolderDisplay-click')
