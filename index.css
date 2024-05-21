@@ -1,7 +1,8 @@
-main{
+@media (min-width: 576px) {
+  main{
     font-family: "Noto Sans KR", sans-serif;
-    width:792px;
-    height:535px;
+    width:100%px;
+    height:1080px;
     display: flex;
     justify-content: center;
     border:10px solid red;
@@ -14,6 +15,12 @@ main{
 }
 li{
   color:white;
+}
+#addwindow{
+  position:fixed;
+  width:80%;
+  height:100px;
+  background-color:black;
 }
 #addwindow{
   z-index: 0;
@@ -45,9 +52,7 @@ hr{
   width:100%;
   transition:0.5s;
 }
-#right_info{
- 
-}
+
 
 .right_info_moved{
   background-color:white;
@@ -68,19 +73,20 @@ text-align: right;
   left:-30%;
   transition:0.5s;
 }
+
 h1{
   font-size:25px;
 }
 #secondwindow{
+  text-align: center;
   color:white;
   width: 100%;
-  height:70%;
+  height:100%;
   position: absolute;
-  background-color:black;
+  background-color:rgb(40,40,40);
   visibility: hidden;
   opacity: 0;
   left:105%;
-  top:15%;
   transition:0.5s;
 }
 #file-list-container{
@@ -90,18 +96,19 @@ h1{
   opacity: 1 !important;
   visibility:visible !important;
 }
-
+#folder{
+  display: flex;
+  justify-content: center;
+}
 #rightThing{
   width:100%;
   display: flex;
   justify-content: space-around;
 }
-#notopenwindow{
-  display:flex;
-  justify-content: right;
-  align-items: center;
-  right:0;
-  height:100%;
+#openwindow{
+  text-align: center;
+  display: flex;
+  justify-content: center;
 }
 #searchimg{
   filter:invert();
@@ -144,7 +151,25 @@ h1{
 #folder-list{
   margin:0;
   padding:0;
+}
+.folderZip{
   overflow: auto;
+  width:80%;
+  height:50%;
+  position: absolute;
+  margin:10%;
+  border-radius: 10px;
+  background-color: rgb(40,40,40);
+}
+::-webkit-scrollbar{
+  width:100%;
+}
+::-webkit-scrollbar-track{
+  background-color:transparent;
+}
+::-webkit-scrollbar-thumb{
+  background-color:rgb(255,217,102);
+  border-radius: 10px;
 }
 li{
   border-bottom:1px white solid;
@@ -184,4 +209,5 @@ a:hover{
   width:100%;
   height:100%;
   background-color:white;
+}
 }

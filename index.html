@@ -20,27 +20,30 @@
        
         <div id="leftThing" > 
             <div id="secondwindow">
-              와~
+              <div id="filelist"></div>
             </div>
             <div id="clickarrow"onclick="leftThing()">
                 <span id="arrow">></span>
             </div>
             <div id="openwindow" >
+                <div>
                 <div id="searchzip">
                 <img id="searchimg" src="https://firebasestorage.googleapis.com/v0/b/macband-cf215.appspot.com/o/Mac%20photo%2Fsearch-interface-symbol.png?alt=media&token=a2fe1515-97b0-414f-9900-26280b475c19">
                 <input id="search" type="text"  placeholder="주소를 검색하세요." onchange="searchAddress()">
                 <div id="line"></div>
                 </div>
-                
                 <hr>
+                <div id="folder">
+                <div class="folderZip">
                 <ul id="folder-list"></ul>
-                
+                </div>
+                </div>
                 </div>
                 <div id="honeycombtext">
                 <img class="honeycomb" src="https://firebasestorage.googleapis.com/v0/b/macband-cf215.appspot.com/o/Mac%20photo%2Fhoneycomb.png?alt=media&token=09a7fc9b-6f08-42f3-b123-c0e2a6bc66d4">
                 <span>공학도서관 X Porsche</span>
                 </div>
-                
+              </div>
             </div>
             
                
@@ -101,6 +104,8 @@
                     li.textContent = folderRef.name;
                     li.onclick = () => {
                         opensecondwindow(folderRef)
+                        listFiles(folderRef);
+                        searchAddressfromFolder(folderRef)
                     }
                     folderList.appendChild(li);
                 });
@@ -112,10 +117,66 @@
             // 여기에 원하는 기능을 추가하십시오.
         };}
 
+      const listFiles = async (folderRef) => {
+    const fileList = document.getElementById('filelist');
+    const storageRef = storage.ref().child('uploads/' + folderRef.name); // uploads 폴더 경로
+
+    try {
+        const res = await storageRef.listAll();
+        // 파일 목록 출력
+        res.items.forEach((fileRef) => {
+            console.log('File:', fileRef.name);
+            const li = document.createElement('li');
+            li.textContent = fileRef.name;
+            fileList.appendChild(li);
+        });
+    } catch (error) {
+        console.error('Error listing files:', error);
+    }
+};
+function ListFiles(folderRef){
+  const fileList = document.getElementById('filelist');
+  const storageRef = storage.ref().child
+}
+        function sortFolderList(searchValue) {
+    const folderList = document.getElementById('folder-list');
+    const folders = folderList.getElementsByTagName('li');
+
+    for (let i = 0; i < folders.length; i++) {
+        const folder = folders[i];
+        const folderName = folder.textContent || folder.innerText;
+        
+        // 검색어가 폴더 이름에 포함되어 있는지 확인
+        if (folderName.includes(searchValue)) {
+            // 매칭되는 폴더를 맨 위로 이동
+            folderList.insertBefore(folder, folderList.firstChild);
+            let geocoder = new google.maps.Geocoder();
+            }
+    }
+}
+
 function searchAddress(){
+  const searchInput = document.getElementById("search");
+    const searchValue = searchInput.value.trim(); // 공백 제거
+    
+    // 검색어로 폴더 리스트 정렬
+    sortFolderList(searchValue);
     let searchAddressValue = document.getElementById("search").value;
     let geocoder = new google.maps.Geocoder();
     geocoder.geocode({ 'address': searchAddressValue }, function(results, status) {
+        if (status === 'OK') {
+            const location = results[0].geometry.location;
+            map.setCenter(location);
+            map.setZoom(14);
+        } else {
+            console.error('지오코딩 에러:', status);
+        }
+    });
+}
+
+function searchAddressfromFolder(folderRef){
+    let geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ 'address': folderRef.name }, function(results, status) {
         if (status === 'OK') {
             const location = results[0].geometry.location;
             map.setCenter(location);
@@ -148,20 +209,25 @@ function leftThing(){
     }
 }
 function opensecondwindow(folderRef){
-    secondwindow.classList.toggle('secondwindow-click' , true)
+    secondwindow.classList.toggle('secondwindow-click' , true )
     secondwindow.innerHTML='<h1>'+folderRef.name+'</h1>'
 }
+
 function displaynone(){
     document.getElementById('left').style.display = 'none';
     sel.innerHTML='<span id="addressbar" onclick=displaynone()>학교목록 >';
 }
         
+function addbtn(){
+  document.getElementById('addwindow').style.display = 'block';
+}
         
         // 파일 처리하기
 function sleep(ms) {
     const wakeUpTime = Date.now() + ms;
     while (Date.now() < wakeUpTime) {}
 }
+
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 37.5642135, lng: 127.0016985 },
@@ -233,14 +299,83 @@ function initMap() {
       }
     ]
   }
-]
+]})
+const storage = firebase.storage();
+      const storageRef = storage.ref('uploads'); // uploads 폴더 경로
+
+      storageRef.listAll().then(function(result) {
+        result.prefixes.forEach(function(folderRef) {
+          // 각 폴더의 이름 가져오기
+          const folderName = folderRef.name;
+          // 각 폴더의 위치를 지오코딩하여 마커로 표시
+          geocodeAndMark(folderName ,folderRef);
+        });
+
+      }).catch(function(error) {
+        // 에러 처리
+        console.error("Error getting storage folder:", error);
+      });
+    
+      storageRef.listAll().then(function(result) {
+                result.prefixes.forEach(function(folderRef) {
+                    const folderName = folderRef.name;
+                    geocodeAndMark(folderName , folderRef);
+                });
+            }).catch(function(error) {
+                console.error("Error getting storage folder:", error);
             });
+            ;   ;
 
 // 마커 클러스터러 생성
     markerCluster = new MarkerClusterer(map, markers, {
         imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
     });
+   
     }
+    
+    function addNewFolder() {
+      const storage = firebase.storage();
+      const storageRef = storage.ref('uploads'); // uploads 폴더 경로
+
+      // 새로운 폴더의 이름을 유니크하게 생성합니다.
+      const newFolderName = "folder_" + Date.now();
+
+      // 파이어베이스 Storage에 새로운 폴더 추가
+      storageRef.child(newFolderName).putString('').then(function(snapshot) {
+        console.log('새로운 폴더가 성공적으로 추가되었습니다.');
+      }).catch(function(error) {
+        console.error('새로운 폴더 추가 중 오류가 발생했습니다:', error);
+      });
+    }
+    function geocodeAndMark(address , folderRef) {
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'address': address }, function(results, status) {
+                if (status === 'OK') {
+                    const location = results[0].geometry.location;
+                    const marker = new google.maps.Marker({
+                        position: location,
+                        map: map,
+                        title: address
+                    });
+                    
+                    // 클릭 이벤트 리스너 추가
+                    marker.addListener('click', function() {
+                        const infowindow = new google.maps.InfoWindow({
+                            content: address
+                        });
+                        infowindow.open(map, marker);
+                        opensecondwindow(folderRef)
+
+                        // 원하는 동작 추가
+                        // 예: 특정 정보를 오른쪽 정보 창에 표시
+                        
+                    });
+
+                } else {
+                    console.error('Geocode was not successful for the following reason:', status);
+                }
+            });
+        }
 
         // 맵에 마커 추가
 function addMarker(location, address) {
