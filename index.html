@@ -176,8 +176,8 @@ function fetchPost(){
   fetch("https:gongdo.kr/api/datapi/place/add",{
     method:"POST",
     body: ({
-        id:userId,
-        datapiid:dataPild
+        id:'user',
+        datapiid:'datapi'
     })
 }).then((res)=> {
     console.log(res);
