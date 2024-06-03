@@ -25,12 +25,15 @@
           <div id="x" onclick="closedWindow()"><h1>x</h1></div>
         </div>
           <form id="info-form">
+
+            <div id="info-form-details">
             <div id="logoZip">
               <label id="logolabel" for="logo">
-                <img src="">P
+                <img id="preview" />
               </label>
-              <input type="file" id="logo" name="logo"><br><br>
+              <input type="file" id="logo" name="logo" onchange="readURL(this);"><br><br>
             </div>
+          </div>
               <div id="addressZip">
                 <button type="button" id="addressBtn" onclick="addressbutton()">주소 추가하기</button>
               <div id="addressDisplay"></div>
@@ -52,7 +55,7 @@
       </div>
       
     </div>
-
+    
       <div id="file-list"></div>
         <div id="leftThing" > 
             <div id="secondwindow">
@@ -157,7 +160,7 @@ function geocodeAddress(geocoder, address) {
                   "address": address,
                   "geolocation": {
                     "lat": lat,
-                    "lng": lng
+                    "lng": lngjw
                   }
                 }
             })
@@ -172,6 +175,19 @@ function geocodeAddress(geocoder, address) {
                 }
           }
             )}
+
+function readURL(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('preview').src = e.target.result;
+    };
+    reader.readAsDataURL(input.files[0]);
+  } else {
+    document.getElementById('preview').src = "";
+  }
+}
+
 function fetchPost(){
   fetch("https:gongdo.kr/api/datapi/place/add",{
     method:"POST",
