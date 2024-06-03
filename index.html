@@ -17,14 +17,42 @@
 </head>
 <body>
     <main>
-     
+      
       <div id="addFolderDisplay">
-        <div id="zip">
-        <input type="text" id="folderNameInput" placeholder="Enter folder name">
-        <button onclick="uploadFile()">Upload</button>
-        <span id="closedWindow" onclick="closedWindow()">X</span>
+        <div class="container">
+          <div class="flex">
+          <h1>주소 추가하기</h1>
+          <div id="x" onclick="closedWindow()"><h1>x</h1></div>
+        </div>
+          <form id="info-form">
+            <div id="logoZip">
+              <label id="logolabel" for="logo">
+                <img src="">P
+              </label>
+              <input type="file" id="logo" name="logo"><br><br>
+            </div>
+              <div id="addressZip">
+                <button type="button" id="addressBtn" onclick="addressbutton()">주소 추가하기</button>
+              <div id="addressDisplay"></div>
+              
+                <div id="addressHidden">
+                  <input id="address" type="text" placeholder="Enter your address" />
+                  <div id="address-details"></div>
+                  <button type="button" id="fixbutton" onclick="fixBtn()">Fix!</button>
+                </div>
+              </div>
+              <label for="group">그룹명</label>
+              <input type="email" id="group" name="group"><br><br>
+              
+              <label for="label">보여질 이름</label>
+              <input type="text" id="label" name="label"><br><br>
+              
+              <button type="button" id="submit-btn" onclick="closedWindow()">Submit</button>
+          </form>
       </div>
+      
     </div>
+
       <div id="file-list"></div>
         <div id="leftThing" > 
             <div id="secondwindow">
@@ -35,7 +63,7 @@
             </div>
             <div id="openwindow" >
                 <div>
-                  <button id="addschool" onclick="addschool()">학교추가</button>
+                  <button id="addschool" onclick="addschool()">주소 추가</button>
                 <div id="searchzip">
                 <img id="searchimg" src="https://firebasestorage.googleapis.com/v0/b/macband-cf215.appspot.com/o/Mac%20photo%2Fsearch-interface-symbol.png?alt=media&token=a2fe1515-97b0-414f-9900-26280b475c19">
                 <input id="search" type="text"  placeholder="주소를 검색하세요." onchange="searchAddress()">
@@ -44,7 +72,7 @@
                 <hr>
                 <div id="folder">
                 <div class="folderZip">
-                <ul id="folder-list"></ul>
+                <ul id="label-list"></ul>
                 </div>
                 
                 </div>
@@ -72,11 +100,11 @@
             </div>         
             </div>    
         </div>
+      </div>
+    </div>
     </main>
     <!-- Firebase 초기화 스크립트 -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage-compat.js"></script>
-    <script>
+  <script>
         let count = 0;
         let count2 = 0;
         let map;
@@ -84,92 +112,106 @@
         window.onload = function() {
             // 업로드된 폴더 목록 가져오기
             // 맵 초기화
-            iframeload();
             initMap();
-            listFolders();
-
+          fetchPost();
         };  
-        const firebaseConfig = {
-            apiKey: "AIzaSyAz3IZwipq6OS8f9ucO9j1ZKxyo-u78NIw",
-  authDomain: "macband-cf215.firebaseapp.com",
-  databaseURL: "https://macband-cf215-default-rtdb.firebaseio.com",
-  projectId: "macband-cf215",
-  storageBucket: "macband-cf215.appspot.com",
-  messagingSenderId: "586331708886",
-  appId: "1:586331708886:web:8a4416d2e48e9565c65877"
-        };
 
-        // Firebase 초기화
-        const app = firebase.initializeApp(firebaseConfig);
-        const storage = firebase.storage();
-        const listFolders = async () => {
-            const storageRef = storage.ref().child('uploads');
-            const folderList = document.getElementById('folder-list');
 
-            try {
-                const res = await storageRef.listAll();
-                folderList.innerHTML = '';
-                res.prefixes.forEach((folderRef) => {
-                    const li = document.createElement('li');
-                    li.textContent = folderRef.name;
-                    li.onclick = () => {
-                        opensecondwindow(folderRef)
-                        listFiles(folderRef);
-                        searchAddressfromFolder(folderRef)
-                    }
-                    folderList.appendChild(li);
-                });
-            } catch (error) {
-                console.error('Error listing folders:', error);
-            }
-            const handleFolderClick = (folderRef) => {
-            alert(`You clicked on folder: ${folderRef}`);
-            // 여기에 원하는 기능을 추가하십시오.
-        };}
-        async function uploadFile() {
+
+document.addEventListener('DOMContentLoaded', () => {
+      const submitBtn = document.getElementById('submit-btn');
+
+      submitBtn.addEventListener('click', () => {
+          // Get values from the input fields
+          const logo = document.getElementById('logo').value;
+          const address = document.getElementById('address').value;
+          const group = document.getElementById('group').value;
+          const label = document.getElementById('label').value;
+
+          // Store values in variables
+          const formData = {
+              logo:logo,
+              
+              address:address,
+              group:group,
+              label:label
+          };
+          var geocoder = new google.maps.Geocoder();
         
+          geocodeAddress(geocoder, address);
+          
+          
+});});
+function geocodeAddress(geocoder, address) {
+            geocoder.geocode({ 'address': address }, function(results, status) {
+                if (status === 'OK') {
+                    var lat = results[0].geometry.location.lat();
+                    var lng = results[0].geometry.location.lng();
+                    fetch("https://gongdo.kr/api/datapi/place/add",{
+            method:"POST",
+            body: ({
+                "datapiId": "eNRiOKLhAvdRTUjocI2J",
+                "groupId": group,
+                "form": {
+                  "label": label,
+                  "address": address,
+                  "geolocation": {
+                    "lat": lat,
+                    "lng": lng
+                  }
+                }
+            })
+          }).then((res)=> {
+            console.log(res);
+            })
+          .then((result) => console.log("결과: ", result));
+          // Output the formData to the console (or handle as needed)
+      
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+          }
+            )}
+function fetchPost(){
+  fetch("https:gongdo.kr/api/datapi/place/add",{
+    method:"POST",
+    body: ({
+        id:userId,
+        datapiid:dataPild
+    })
+}).then((res)=> {
+    console.log(res);
+})
 
-      const folderName = document.getElementById('folderNameInput').value;
-      if (!folderName) {
-        alert('Please enter a folder name.');
-        return;
-      }
+}
 
-      const fileName = 'sample.txt';
-      const fileContent = 'This is a sample file content.';
+function addressbutton(){
+  document.getElementById("addressHidden").style.display="block"
+}
+function initAutocomplete() {
 
-      // Create a Blob from the file content
-      const blob = new Blob([fileContent], { type: 'text/plain' });
+    // Create the autocomplete object, restricting the search predictions to geographical location types.
+    const autocomplete = new google.maps.places.Autocomplete(
+        document.getElementById('address'),
+        { types: ['geocode'] }
+    );
 
-      // Create a reference to the file in the specified folder
-      const storageRef = storage.ref().child(`uploads/${folderName}/${fileName}`);
-
-      // Upload the file
-      try {
-        await storageRef.put(blob);
-        addFolderDisplay.classList.toggle('addFolderDisplay-click')
-        console.log('File uploaded successfully.');
-        // Refresh the folder list after upload
-        listFolders();
-      } catch (error) {
-        console.error('Upload failed:', error);
-      }
-    }
-    listFolders();
-
-function iframeload(){
-  window.addEventListener("message", function(message){
-    alert(message.data);
-    window.parent.postMessage(message.data);
-  })
-  
+    // When the user selects an address from the dropdown, populate the address fields in the form.
+    autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        const addressDetails = document.getElementById('address-details');
+        
+        // Get the address components and display them.
+      
+    });
 }
 
 function addschool(){
-  let bigblur = document.getElementById('bigblur')
+  initAutocomplete()
+
   let addFolderDisplay = document.getElementById('addFolderDisplay');
   addFolderDisplay.classList.toggle('addFolderDisplay-click')
-  bigblur.classList.toggle('bigblur-blur')
+
 }
 function closedWindow(){
   addFolderDisplay.classList.toggle('addFolderDisplay-click')
@@ -191,6 +233,11 @@ function searchAddress(){
             console.error('지오코딩 에러:', status);
         }
     });
+}
+function fixBtn(){
+  const fixaddress = document.getElementById('address').value;
+  addressDisplay.innerHTML=fixaddress;
+  document.getElementById("addressHidden").style.display="none";
 }
 function sortFolderList(searchValue) {
     const folderList = document.getElementById('folder-list');
@@ -270,258 +317,18 @@ function initMap() {
   {
     "elementType": "geometry",
     "stylers": [
-      {
-        "color": "#ebe3cd"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#523735"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "color": "#f5f1e6"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#c9b2a6"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.land_parcel",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#dcd2be"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.land_parcel",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#ae9e90"
-      }
-    ]
-  },
-  {
-    "featureType": "landscape.natural",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#dfd2ae"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#dfd2ae"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#93817c"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "geometry.fill",
-    "stylers": [
-      {
-        "color": "#a5b076"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#447530"
-      }
-    ]
-  },
   {
     "featureType": "road",
     "stylers": [
       {
         "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#f5f1e6"
-      }
-    ]
-  },
-  {
-    "featureType": "road.arterial",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#fdfcf8"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#f8c967"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#e9bc62"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway.controlled_access",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#e98d58"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway.controlled_access",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#db8555"
-      }
-    ]
-  },
-  {
-    "featureType": "road.local",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#806b63"
-      }
-    ]
-  },
-  {
-    "featureType": "transit.line",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#dfd2ae"
-      }
-    ]
-  },
-  {
-    "featureType": "transit.line",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#8f7d77"
-      }
-    ]
-  },
-  {
-    "featureType": "transit.line",
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "color": "#ebe3cd"
-      }
-    ]
-  },
-  {
-    "featureType": "transit.station",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#dfd2ae"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "geometry.fill",
-    "stylers": [
-      {
-        "color": "#b9d3c2"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#92998d"
       }
     ]
   }
+]
+  }
 ]})
-const storage = firebase.storage();
-      const storageRef = storage.ref('uploads'); // uploads 폴더 경로
 
-      storageRef.listAll().then(function(result) {
-        result.prefixes.forEach(function(folderRef) {
-          // 각 폴더의 이름 가져오기
-          const folderName = folderRef.name;
-          // 각 폴더의 위치를 지오코딩하여 마커로 표시
-          geocodeAndMark(folderName ,folderRef);
-        });
-
-      }).catch(function(error) {
-        // 에러 처리
-        console.error("Error getting storage folder:", error);
-      });
-    
-      storageRef.listAll().then(function(result) {
-                result.prefixes.forEach(function(folderRef) {
-                    const folderName = folderRef.name;
-                    geocodeAndMark(folderName , folderRef);
-                });
-            }).catch(function(error) {
-                console.error("Error getting storage folder:", error);
-            });
-            ;   ;
 
 // 마커 클러스터러 생성
     markerCluster = new MarkerClusterer(map, markers, {
@@ -529,22 +336,7 @@ const storage = firebase.storage();
     });
    
     }
-    
-    function addNewFolder() {
-      const storage = firebase.storage();
-      const storageRef = storage.ref('uploads'); // uploads 폴더 경로
-
-      // 새로운 폴더의 이름을 유니크하게 생성합니다.
-      const newFolderName = "folder_" + Date.now();
-
-      // 파이어베이스 Storage에 새로운 폴더 추가
-      storageRef.child(newFolderName).putString('').then(function(snapshot) {
-        console.log('새로운 폴더가 성공적으로 추가되었습니다.');
-      }).catch(function(error) {
-        console.error('새로운 폴더 추가 중 오류가 발생했습니다:', error);
-      });
-    }
-    function geocodeAndMark(address , folderRef) {
+      function geocodeAndMark(address , folderRef) {
             const geocoder = new google.maps.Geocoder();
             geocoder.geocode({ 'address': address }, function(results, status) {
                 if (status === 'OK') {
