@@ -118,7 +118,7 @@
             initMap();
           fetchPost();
           iframeload();
-          
+
         };  
 
 
@@ -150,7 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function iframeload(){
   window.addEventListener("message", function(message){
+    console.log("test_0603");
     alert(message.data);
+    console.log(message.data)
     window.parent.postMessage(text);
     window.parent.postMessage(message.data);
   })
@@ -172,7 +174,7 @@ function geocodeAddress(geocoder, address) {
                   "address": address,
                   "geolocation": {
                     "lat": lat,
-                    "lng": lngjw
+                    "lng": lng
                   }
                 }
             })
@@ -200,22 +202,11 @@ function readURL(input) {
   }
 }
 
-function fetchPost(){
-  fetch("https:gongdo.kr/api/datapi/place/add",{
-    method:"POST",
-    body: ({
-        id:'user',
-        datapiid:'datapi'
-    })
-}).then((res)=> {
-    console.log(res);
-})
-
-}
 
 function addressbutton(){
   document.getElementById("addressHidden").style.display="block"
 }
+
 function initAutocomplete() {
 
     // Create the autocomplete object, restricting the search predictions to geographical location types.
