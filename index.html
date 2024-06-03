@@ -168,6 +168,14 @@ function iframeload(){
 
 }
 
+function receiveMessage(event) {
+  event.source.postMessage(
+    "hi there yourself!  the secret response " + "is: rheeeeet!",
+    event.origin,
+  );
+}
+window.addEventListener("message", receiveMessage, false);
+
 function geocodeAddress(geocoder, address) {
             geocoder.geocode({ 'address': address }, function(results, status) {
                 if (status === 'OK') {
