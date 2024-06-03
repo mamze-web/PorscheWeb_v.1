@@ -110,6 +110,7 @@
     <div id="test">
       <h1> test</h1>
     </div>
+    <button onclick="iframeload"></button>
     </main>
     <!-- Firebase 초기화 스크립트 -->
   <script>
@@ -154,7 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function iframeload(){
-  console.log("아이프레임 로드");
   window.addEventListener("message", function(message){
     console.log("test_0603");
       const msg = message;
