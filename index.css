@@ -23,7 +23,10 @@
 
 }
 #addressBtn , #submit-btn{
-  background-color:black;
+
+}
+#logolabel:hover{
+  background-color:rgb(0,0,0,0.2);
 }
 #zip label{
   margin:30px;
