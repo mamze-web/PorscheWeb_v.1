@@ -105,6 +105,11 @@
         </div>
       </div>
     </div>
+
+
+    <div id="test">
+      <h1> test</h1>
+    </div>
     </main>
     <!-- Firebase 초기화 스크립트 -->
   <script>
@@ -147,9 +152,14 @@ document.addEventListener('DOMContentLoaded', () => {
           
 });});
 
+
 function iframeload(){
   window.addEventListener("message", function(message){
     console.log("test_0603");
+      const msg = message;
+      const test = document.querySelector("#test");
+      test.appendChild(`<h1>${msg}</h1> `)
+
     alert(message.data);
     console.log(message.data)
     window.parent.postMessage(text);
@@ -165,7 +175,7 @@ function geocodeAddress(geocoder, address) {
                     var lng = results[0].geometry.location.lng();
                     fetch("https://gongdo.kr/api/datapi/place/add",{
             method:"POST",
-            body: ({
+            body: JSON.stringify({
                 "datapiId": "eNRiOKLhAvdRTUjocI2J",
                 "groupId": group,
                 "form": {
@@ -179,6 +189,7 @@ function geocodeAddress(geocoder, address) {
             })
           }).then((res)=> {
             console.log(res);
+            return res.json()
             })
           .then((result) => console.log("결과: ", result));
           // Output the formData to the console (or handle as needed)
@@ -193,7 +204,7 @@ function readURL(input) {
   if (input.files && input.files[0]) {
     var reader = new FileReader();
     reader.onload = function(e) {
-      document.getElementById('preview').src = e.target.result;
+      document.getElementById('카').src = e.target.result;
     };
     reader.readAsDataURL(input.files[0]);
   } else {
