@@ -31,7 +31,7 @@
               <label id="logolabel" for="logo">
                 <img id="preview" />
               </label>
-              <input type="file" id="logo" name="logo" onchange="readURL(this);"><br><br>
+              <input type="file" id="logo" name="logo" ><br><br>
             </div>
           </div>
               <div id="addressZip">
@@ -117,6 +117,8 @@
             // 맵 초기화
             initMap();
           fetchPost();
+          iframeload();
+          
         };  
 
 
@@ -145,6 +147,16 @@ document.addEventListener('DOMContentLoaded', () => {
           
           
 });});
+
+function iframeload(){
+  window.addEventListener("message", function(message){
+    alert(message.data);
+    window.parent.postMessage(text);
+    window.parent.postMessage(message.data);
+  })
+
+}
+
 function geocodeAddress(geocoder, address) {
             geocoder.geocode({ 'address': address }, function(results, status) {
                 if (status === 'OK') {
