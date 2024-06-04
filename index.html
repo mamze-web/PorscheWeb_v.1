@@ -154,9 +154,12 @@
 
 
 function printMessage(){
+  console.log(message.data);
   window.addEventListener("message", function(e){
     console.log(e.data);
-})}
+})
+}
+
 document.addEventListener('DOMContentLoaded', () => {
       const submitBtn = document.getElementById('submit-btn');
 
@@ -268,7 +271,6 @@ async function folderList(){
         }
     });
   }
-  console.log(result.resultData.items[0].address);
 
   folderList.innerHTML = ""; // 기존 내용 초기화
 
