@@ -105,12 +105,6 @@
         </div>
       </div>
     </div>
-
-
-    <div id="test">
-      <h1> test</h1>
-    </div>
-    <button onclick="iframeload"></button>
     </main>
     <!-- Firebase 초기화 스크립트 -->
   <script>
@@ -122,6 +116,7 @@
             // 업로드된 폴더 목록 가져오기
             // 맵 초기화
             initMap();
+          fetchPost();
           iframeload();
 
         };  
@@ -153,13 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
           
 });});
 
-
 function iframeload(){
   window.addEventListener("message", function(message){
     console.log("test_0603");
-      const msg = message;
-      const test = document.querySelector("#test");
-      test.appendChild(`<h1>${msg}</h1> `)
     alert(message.data);
     console.log(message.data)
     window.parent.postMessage(text);
@@ -168,14 +159,6 @@ function iframeload(){
 
 }
 
-function receiveMessage(event) {
-  event.source.postMessage(
-    "hi there yourself!  the secret response " + "is: rheeeeet!",
-    event.origin,
-  );
-}
-window.addEventListener("message", receiveMessage, false);
-
 function geocodeAddress(geocoder, address) {
             geocoder.geocode({ 'address': address }, function(results, status) {
                 if (status === 'OK') {
@@ -183,7 +166,7 @@ function geocodeAddress(geocoder, address) {
                     var lng = results[0].geometry.location.lng();
                     fetch("https://gongdo.kr/api/datapi/place/add",{
             method:"POST",
-            body: JSON.stringify({
+            body: ({
                 "datapiId": "eNRiOKLhAvdRTUjocI2J",
                 "groupId": group,
                 "form": {
@@ -197,7 +180,6 @@ function geocodeAddress(geocoder, address) {
             })
           }).then((res)=> {
             console.log(res);
-            return res.json()
             })
           .then((result) => console.log("결과: ", result));
           // Output the formData to the console (or handle as needed)
@@ -212,7 +194,7 @@ function readURL(input) {
   if (input.files && input.files[0]) {
     var reader = new FileReader();
     reader.onload = function(e) {
-      document.getElementById('카').src = e.target.result;
+      document.getElementById('preview').src = e.target.result;
     };
     reader.readAsDataURL(input.files[0]);
   } else {
