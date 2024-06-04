@@ -70,6 +70,7 @@
           </div>
           
             <div id="secondwindow">
+              <div class="flex">
               <div id="leftarrow" onclick="closedLeftArrow()"><<</div>
               <div id="headList">
               <div id="secondwindowLogo"></div>
@@ -78,8 +79,12 @@
                 <div id="secondwindowAddress"></div>
                 <div id="secondwindowTotal"></div>
               </div>
-              <div id="secondRecord"></div>
             </div>
+            </div>
+            <hr>
+            <div class="flex">
+            <div id="secondwindowRecord"></div>
+          </div>
             </div>
             
 
@@ -157,9 +162,9 @@
 
 
 function printMessage(){
-  console.log(message.data);
   window.addEventListener("message", function(e){
     console.log(e.data);
+    alert("wow")
 })
 }
 
@@ -397,24 +402,7 @@ function addschool(){
 function closedWindow(){
   addFolderDisplay.style.display="none"
 }
-function searchAddress(){
-  const searchInput = document.getElementById("search");
-    const searchValue = searchInput.value.trim(); // 공백 제거
-    
-    // 검색어로 폴더 리스트 정렬
-    sortFolderList(searchValue);
-    let searchAddressValue = document.getElementById("search").value;
-    let geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ 'address': searchAddressValue }, function(results, status) {
-        if (status === 'OK') {
-            const location = results[0].geometry.location;
-            map.setCenter(location);
-            map.setZoom(14);
-        } else {
-            console.error('지오코딩 에러:', status);
-        }
-    });
-}
+
 function fixBtn(){
   
   const fixaddress = document.getElementById('address').value;
@@ -427,33 +415,8 @@ function fixBtn(){
   
 
 }
-function sortFolderList(searchValue) {
-    const folderList = document.getElementById('folder-list');
-    const folders = folderList.getElementsByTagName('li');
 
-    for (let i = 0; i < folders.length; i++) {
-        const folder = folders[i];
-        const folderName = folder.textContent || folder.innerText;
-        
-        // 검색어가 폴더 이름에 포함되어 있는지 확인
-        if (folderName.includes(searchValue)) {
-            // 매칭되는 폴더를 맨 위로 이동
-            folderList.insertBefore(folder, folderList.firstChild);
-        }
-    }
-}
-function searchAddressfromFolder(folderRef){
-    let geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ 'address': folderRef.name }, function(results, status) {
-        if (status === 'OK') {
-            const location = results[0].geometry.location;
-            map.setCenter(location);
-            map.setZoom(14);
-        } else {
-            console.error('지오코딩 에러:', status);
-        }
-    });
-}
+
 
 function leftThing(){
     const secondwindow = document.getElementById("secondwindow")
@@ -487,9 +450,9 @@ async function opensecondwindow(resultLabel, resultAddress, resultId,resultLogo)
   const secondwindow = document.getElementById('secondwindow'); // secondwindow 요소를 참조
   closedWindow()
 
-  secondwindow.style.display = "flex";
+  secondwindow.style.display = "block";
   secondwindowhead.innerHTML = '<h1>' + resultLabel + '</h1>';
-
+  secondRecord.innerHtml="";
   // 기존에 있는 이미지를 모두 제거합니다.
   while (secondImg.firstChild) {
     secondImg.removeChild(secondImg.firstChild);
@@ -514,6 +477,16 @@ async function opensecondwindow(resultLabel, resultAddress, resultId,resultLogo)
   const result = await response.json();
   console.log(result)
   secondTotal.innerHTML="등록된 데이터: "+result.resultData.total+"개"
+
+  const listItem = document.createElement("li"); // 새로운 li 요소 생성
+    // 이미지 요소 생성 및 설정
+    // 텍스트 요소 생성 및 설정
+    const total=result.resultData.total;
+    for(let i=0; i<total; i++){
+    const textNode = document.createTextNode(result.resultData.items[i].label); // label 값을 텍스트 노드로 설정
+    listItem.appendChild(textNode); // 텍스트 노드를 li 요소에 추가
+    secondRecord.appendChild(listItem); // 생성한 li 요소를 folderList에 추가
+    }
 }
 function displaynone(){
     document.getElementById('left').style.display = 'none';

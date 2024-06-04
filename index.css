@@ -359,6 +359,22 @@ h1{
   opacity: 1 !important;
   visibility:visible !important;
 }
+#secondwindowRecord{
+  width:350px;
+  height:200px;
+
+  
+}
+#secondwindowRecord li{
+  color:black;
+  border:none;
+  background-color:white;
+  
+}
+hr{
+  border:1px rgb(37,86,246) solid
+}
+}
 #folder{
   display: flex;
   justify-content: center;
