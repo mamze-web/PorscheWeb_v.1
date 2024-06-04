@@ -6,10 +6,11 @@
     <title>Document</title>
 </head>
 <body>
-    <iframe src="./child.html"></iframe>
+    <iframe src="../index.html"></iframe>
 </body>
 </html>
 <script>
-    var iframe = document.getElementById('child_iframe').contentWindow;         
-iframe.childFunction();
+    let passData = {member_id:'jjong2028', member_name:'쫑'};
+    let iframe = document.getElementById('qwer-iframe').contentWindow;
+    iframe.postMessage(passData, 'http://qwer.co.kr')
 </script>
