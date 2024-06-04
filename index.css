@@ -372,7 +372,10 @@ h1{
   text-align: left;
   width:330px;
   position: absolute;
-  left:4%;
+  left:4.5%;
+  border-radius: 10px;
+  height:60px;
+  font-size:15px;
 }
 hr{
   border:1px rgb(37,86,246) solid
