@@ -128,7 +128,22 @@
   width:100%;
   justify-content: center;
 }
+#textBetween{
+  display: flex;
+  justify-content: space-between;
+  width:350px;
+  align-items: center;
+}
+#addRecord{
+  background-color:rgb(37,86,246);
+  color:white;
+  border:none;
+  height:40px;
+  width:60px;
+  border-radius: 10px;
+  font-size:10px;
 
+}
 #submit-btn{
   background-color:rgb(37,86,246);
   color:white;
@@ -363,10 +378,9 @@ h1{
   width:350px;
   height:200px;
   
-  
 }
 #secondwindowRecord li{
-  color:black;
+  color:rgb(37,86,246);
   border:none;
   background-color:white;
   text-align: left;
@@ -374,16 +388,18 @@ h1{
   position: absolute;
   left:4.5%;
   border-radius: 10px;
-  height:60px;
+  height:40px;
   font-size:15px;
+
 }
 #secondwindowRecord button{
   background-color:rgb(37,86,246);
   border:none;
   color:white;
-  width:60px;
+  width:70px;
   height:25px;
   border-radius: 10px;
+  
 }
 hr{
   border:1px rgb(37,86,246) solid
