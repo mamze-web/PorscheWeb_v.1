@@ -66,7 +66,7 @@
   height:40px;
   width:98%;
   margin:10px;
-
+  background-color: white;
   border:2px rgb(37,86,246) solid;
   border-radius:10px;
   color:rgb(40,40,40);
@@ -104,6 +104,7 @@
   width:100%;
 }
 #logoZip label{
+  background-color: white;
   display: flex;
   padding:20px;
   vertical-align: middle;
@@ -138,7 +139,7 @@
   border-radius:10px;
 }
 #logoZip input[type="file"]{
-
+  
   width:0;
   height:0;
   padding:0;
@@ -147,6 +148,7 @@
 }
 
 #logoZip{
+  
   display: flex;
   justify-content: center;
   align-items: center;
@@ -183,13 +185,14 @@
   align-items: center;
   justify-content: center;
   display: none;
-  background-color:white;
+  background-color:rgb(246,248,255);
 
 }
 #displayName{
   color:rgb(37,86,246);
 }
 #label{
+  background-color: white;
   display: flex;
   justify-content: center;
   height:40px;
@@ -318,11 +321,12 @@ h1{
   width: 100%;
   height:100%;
   position: absolute;
-  background-color:white;
+  background-color:rgb(246,248,255);
   visibility: hidden;
   opacity: 0;
   left:105%;
-  transition:0.5s;
+  border-radius: 10px;
+
 }
 .secondwindow-click{
   opacity: 1 !important;

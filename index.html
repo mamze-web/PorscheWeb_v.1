@@ -33,7 +33,7 @@
               <div id="addressZip">
                   <input id="address" type="text" placeholder="주소를 입력해주세요!" />
 
-                  <button type="button" id="fixbutton" onclick="fixBtn()">Fix!</button>
+                  <button type="button" id="fixbutton" onclick="fixBtn()">검색</button>
                 </div>
               
               </div>
@@ -54,7 +54,7 @@
             </div>
           </div>
             <!-- </div> -->
-              <button type="button" id="submit-btn" onclick="closedWindow()">Submit</button>
+              <button type="button" id="submit-btn" onclick="closedWindow()">주소 찾기</button>
             </div>
           </div>
             </form>
@@ -70,7 +70,7 @@
           </div>
           
             <div id="secondwindow">
-              
+              <div id="secondwindowLogo"></div>
             </div>
             <div id="clickarrow"onclick="leftThing()">
                 <span id="arrow">✔️ 나의 주소 추가하기</span>
@@ -108,7 +108,6 @@
             </div>    
         </div>
       </div>
-      <button onclick="iframeTest()">TEST BUTTON</button>
     </div>
 
     </main>
@@ -140,10 +139,14 @@
           folderList()
           // iframeTest()
           profileLoad()
+          printMessage()
         };  
 
 
-
+function printMessage(){
+  window.addEventListener("message", function(message){
+    console.log(message.data);
+})}
 document.addEventListener('DOMContentLoaded', () => {
       const submitBtn = document.getElementById('submit-btn');
 
@@ -363,7 +366,7 @@ function initAutocomplete() {
 
 function addschool(){
   initAutocomplete()
-
+  secondwindow.classList.toggle('secondwindow-click',false)
   let addFolderDisplay = document.getElementById('addFolderDisplay');
   addFolderDisplay.style.display="block"
 
@@ -449,9 +452,11 @@ function leftThing(){
         count2=0;
     }
 }
-function opensecondwindow(resultLabel,resultAddress){
-    secondwindow.classList.toggle('secondwindow-click' , true )
+function opensecondwindow(resultLabel,resultAddress,resultLogo){
+    secondwindow.classList.toggle('secondwindow-click')
     secondwindow.innerHTML='<h1>'+resultLabel+'</h1>'
+
+    closedWindow()
 }
 
 function displaynone(){
