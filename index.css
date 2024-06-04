@@ -61,9 +61,7 @@
   position: absolute;
   margin-top:20px;
 }
-#address[type=text]{
-  margin-left:20px;
-}
+
 #address{
   height:40px;
   width:98%;
@@ -192,6 +190,8 @@
   color:rgb(37,86,246);
 }
 #label{
+  display: flex;
+  justify-content: center;
   height:40px;
   width:300px;
   border:2px rgb(37,86,246) solid;

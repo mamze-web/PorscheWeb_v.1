@@ -114,20 +114,20 @@
     </main>
     <!-- Firebase 초기화 스크립트 --> 
   <script>
-    function iframeTest(){
-    var message = 'Hello from parent window!';
-      window.parent.postMessage(message, '*');
+  //   function iframeTest(){
+  //   var message = 'Hello from parent window!';
+  //     window.parent.postMessage(message, '*');
 
 
-    // 부모 페이지로 메시지를 보낸 후 응답 처리
+  //   // 부모 페이지로 메시지를 보낸 후 응답 처리
 
-      if (event.origin !== window.location.origin) return; // 보안을 위한 검사
-      console.log('Received message from parent:', event.data);
+  //     if (event.origin !== window.location.origin) return; // 보안을 위한 검사
+  //     console.log('Received message from parent:', event.data);
 
-      // 부모 페이지에 응답 보내기
-      event.source.postMessage('Response from child', event.origin);
-      console.log(message.data)
-  }
+  //     // 부모 페이지에 응답 보내기
+  //     event.source.postMessage('Response from child', event.origin);
+  //     console.log(message.data)
+  // }
         let count = 0;
         let count2 = 0;
         let map;
@@ -138,7 +138,7 @@
             initMap();
 
           folderList()
-          iframeTest()
+          // iframeTest()
           profileLoad()
         };  
 
@@ -269,8 +269,11 @@ async function folderList(){
     // 클릭 이벤트 추가
     listItem.addEventListener('click', () => {
       document.getElementById('secondwindow').style.display = 'block';
-      alert(`Clicked on: ${item.address}`);
       // 또는 다른 동작을 수행할 수 있습니다.
+      const resultLabel = item.label
+      const resultAddress = item.address 
+      const resultLogo = item.logo
+      opensecondwindow(resultLabel, resultAddress , resultLogo)
     });
   });
 }
@@ -283,7 +286,6 @@ function receiveMessage(event) {
   );
 }
 window.addEventListener("message", receiveMessage, false);
-console.log(message.data)
 
 function geocodeAddress(geocoder, address,label) {
             geocoder.geocode({ 'address': address }, function(results, status) {
@@ -447,9 +449,9 @@ function leftThing(){
         count2=0;
     }
 }
-function opensecondwindow(folderRef){
+function opensecondwindow(resultLabel,resultAddress){
     secondwindow.classList.toggle('secondwindow-click' , true )
-    secondwindow.innerHTML='<h1>'+folderRef.name+'</h1>'
+    secondwindow.innerHTML='<h1>'+resultLabel+'</h1>'
 }
 
 function displaynone(){
