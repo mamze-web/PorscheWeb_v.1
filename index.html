@@ -22,6 +22,7 @@
         <div class="container">
           <div class="flex">
           <h1>주소 추가하기</h1>
+          
           <div id="x" onclick="closedWindow()"><h1>x</h1></div>
         </div>
           <!-- <form id="info-form">
@@ -38,10 +39,11 @@
                   <input id="address" type="text" placeholder="주소를 입력해주세요!" />
 
                   <button type="button" id="fixbutton" onclick="fixBtn()">Fix!</button>
-                  <div id="addressDisplay"></div>
+                
               
               </div>
-            
+              <div id="addressDisplay"></div>
+              
               <!-- <label for="label">보여질 이름</label>
               <input type="text" id="label" name="label"><br><br>
               
@@ -52,6 +54,7 @@
     </div>
     
       <div id="file-list"></div>
+      <div id="other-element"></div>
         <div id="leftThing" > 
             <div id="secondwindow">
               
@@ -217,7 +220,7 @@ function iframeTest(){
       event.source.postMessage('Response from child', event.origin);
    
 
-    window.addEventListener('message', handleParentResponse);
+   
 }
 
 function receiveMessage(event) {
@@ -277,12 +280,7 @@ function readURL(input) {
 }
 
 
-function addressbutton(){
-  document.getElementById("addressHidden").style.display="block"
-}
-
 function initAutocomplete() {
-
     // Create the autocomplete object, restricting the search predictions to geographical location types.
     const autocomplete = new google.maps.places.Autocomplete(
         document.getElementById('address'),
@@ -292,12 +290,20 @@ function initAutocomplete() {
     // When the user selects an address from the dropdown, populate the address fields in the form.
     autocomplete.addListener('place_changed', () => {
         const place = autocomplete.getPlace();
-        const addressDetails = document.getElementById('address-details');
-        
+        const otherElement = document.getElementById('other-element'); // 다른 요소의 ID를 가져옵니다.
+
+        // Clear previous contents
+        otherElement.innerHTML = "";
+
         // Get the address components and display them.
-      
+        place.address_components.forEach(component => {
+            const componentSpan = document.createElement('span');
+            componentSpan.textContent = component.long_name;
+            otherElement.appendChild(componentSpan);
+        });
     });
 }
+
 
 function addschool(){
   initAutocomplete()
