@@ -24,7 +24,7 @@
           <h1>주소 추가하기</h1>
           <div id="x" onclick="closedWindow()"><h1>x</h1></div>
         </div>
-          <form id="info-form">
+          <!-- <form id="info-form">
 
             <div id="info-form-details">
             <div id="logoZip">
@@ -33,22 +33,19 @@
               </label>
               <input type="file" id="logo" name="logo"onchange="readURL(this);" ><br><br>
             </div>
-          </div>
+          </div> -->
               <div id="addressZip">
-                <button type="button" id="addressBtn" onclick="addressbutton()">주소 추가하기</button>
-              <div id="addressDisplay"></div>
-              
-                <div id="addressHidden">
-                  <input id="address" type="text" placeholder="Enter your address" />
-                  <div id="address-details"></div>
+                  <input id="address" type="text" placeholder="주소를 입력해주세요!" />
+
                   <button type="button" id="fixbutton" onclick="fixBtn()">Fix!</button>
-                </div>
+                  <div id="addressDisplay"></div>
+              
               </div>
             
-              <label for="label">보여질 이름</label>
+              <!-- <label for="label">보여질 이름</label>
               <input type="text" id="label" name="label"><br><br>
               
-              <button type="button" id="submit-btn" onclick="closedWindow()">Submit</button>
+              <button type="button" id="submit-btn" onclick="closedWindow()">Submit</button> -->
           </form>
       </div>
       
@@ -210,21 +207,19 @@ async function folderList(){
   });
 }
 function iframeTest(){
-  function sendMessageToParent(message) {
-      window.parent.postMessage(message, '*');
-    }
-
+  window.parent.postMessage(message, '*');
     // 부모 페이지로 메시지를 보낸 후 응답 처리
-    function handleParentResponse(event) {
+   
       if (event.origin !== window.location.origin) return; // 보안을 위한 검사
       console.log('Received message from parent:', event.data);
 
       // 부모 페이지에 응답 보내기
       event.source.postMessage('Response from child', event.origin);
-    }
+   
 
     window.addEventListener('message', handleParentResponse);
 }
+
 function receiveMessage(event) {
   event.source.postMessage(
     "hi there yourself!  the secret response " + "is: rheeeeet!",
