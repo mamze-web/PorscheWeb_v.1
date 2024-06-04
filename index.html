@@ -70,8 +70,18 @@
           </div>
           
             <div id="secondwindow">
+              <div id="headList">
               <div id="secondwindowLogo"></div>
+              <div id="headText">
+                <div id="secondwindowHead"></div>
+                <div id="secondwindowAddress"></div>
+                <div id="secondwindowTotal"></div>
+              </div>
             </div>
+            </div>
+            
+
+            
             <div id="clickarrow"onclick="leftThing()">
                 <span id="arrow">✔️ 나의 주소 추가하기</span>
             </div>
@@ -144,8 +154,8 @@
 
 
 function printMessage(){
-  window.addEventListener("message", function(message){
-    console.log(message.data);
+  window.addEventListener("message", function(e){
+    console.log(e.data);
 })}
 document.addEventListener('DOMContentLoaded', () => {
       const submitBtn = document.getElementById('submit-btn');
@@ -230,6 +240,17 @@ async function folderList(){
         groupId: ''
     })        
   });
+  
+  const responseRecord = await fetch("https://gongdo.kr/api/datapi/place/record/list",{
+    method:"POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        datapiId: "eNRiOKLhAvdRTUjocI2J",
+        placeId: ''
+    })        
+  });
   var i;
 
   const result = await response.json();
@@ -276,7 +297,7 @@ async function folderList(){
       const resultLabel = item.label
       const resultAddress = item.address 
       const resultLogo = item.logo
-      opensecondwindow(resultLabel, resultAddress , resultLogo)
+      opensecondwindow(resultLabel, resultAddress , resultLogo , )
     });
   });
 }
@@ -369,6 +390,7 @@ function addschool(){
   secondwindow.classList.toggle('secondwindow-click',false)
   let addFolderDisplay = document.getElementById('addFolderDisplay');
   addFolderDisplay.style.display="block"
+  
 
 }
 function closedWindow(){
@@ -452,11 +474,28 @@ function leftThing(){
         count2=0;
     }
 }
-function opensecondwindow(resultLabel,resultAddress,resultLogo){
-    secondwindow.classList.toggle('secondwindow-click')
-    secondwindow.innerHTML='<h1>'+resultLabel+'</h1>'
+function opensecondwindow(resultLabel, resultAddress, resultLogo) {
+  const secondwindowhead = document.getElementById('secondwindowHead');
+  const secondImg = document.getElementById('secondwindowLogo');
+  const secondAddress = document.getElementById('secondwindowAddress');
+  const secondTotal = document.getElementById('secondwindowTotal');
+  const secondwindow = document.getElementById('secondwindow'); // secondwindow 요소를 참조
+  closedWindow()
+  secondwindow.style.display = "flex";
+  secondwindowhead.innerHTML = '<h1>' + resultLabel + '</h1>';
 
-    closedWindow()
+  // 기존에 있는 이미지를 모두 제거합니다.
+  while (secondImg.firstChild) {
+    secondImg.removeChild(secondImg.firstChild);
+  }
+
+  const img = document.createElement("img");
+  img.src = "https://firebasestorage.googleapis.com/v0/b/microschool-gongdo.appspot.com/o/prod%2Fres%2FPorsche%20web%2Ftest%2Fbee.png?alt=media&token=1ec62c16-c7b7-45e2-a9e5-0f5b0e286dbe"; // 이미지 URL 설정
+  img.alt = resultLabel; // 대체 텍스트 설정
+  img.width = 80; // 이미지 너비 설정
+  img.style.borderRadius = "50%"; // 동그랗게 설정
+
+  secondImg.appendChild(img); // 이미지를 secondImg 요소에 추가
 }
 
 function displaynone(){
