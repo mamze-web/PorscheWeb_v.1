@@ -61,7 +61,7 @@
   position: absolute;
   margin-top:20px;
 }
-input[type=text]{
+#address[type=text]{
   margin-left:20px;
 }
 #address{
