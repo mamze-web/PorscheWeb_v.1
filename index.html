@@ -163,14 +163,6 @@
 
 function printMessage(){
   console.log("wow")
-  window.addEventListener('message', function(e) {
-    console.log(e.data)         // { parentData: 'parent_data' }
-    console.log(e.origin)       // 부모창 도메인
-    if (e.data.parentData === 'parent_data') {
-      // 실행 할 함수
-    }
-  })
-console.log("failed")
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -314,6 +306,13 @@ async function folderList(){
 }
 
 
+function receiveMessage(event) {
+  event.source.postMessage(
+    "hi there yourself!  the secret response " + "is: rheeeeet!",
+    event.origin,
+  );
+}
+window.addEventListener("message", receiveMessage, false);
 
 function geocodeAddress(geocoder, address,label) {
             geocoder.geocode({ 'address': address }, function(results, status) {
@@ -488,24 +487,25 @@ for (let i = 0; i < total; i++) {
 
     // 버튼 요소 생성 및 설정
     const button = document.createElement("button");
-    button.textContent = "Download"; // 버튼에 텍스트 설정 (예: 'Download')
+    button.textContent = "그래프 보기"; // 버튼에 텍스트 설정 (예: 'Download')
 
-    // a 요소 생성 및 설정 (다운로드 링크)
-    const link = document.createElement("a");
-    link.href = result.resultData.items[i].dataPackage.zip; // 다운로드할 파일의 URL 설정
-    link.download = ""; // 다운로드 속성 설정 (옵션: 파일 이름을 지정할 수 있음)
-    link.style.display = "none"; // a 요소를 화면에 표시하지 않음
-    link.appendChild(document.createTextNode("Download"));
+    // // a 요소 생성 및 설정 (다운로드 링크)
+    // const link = document.createElement("a");
+    // link.href = result.resultData.items[i].dataPackage.zip; // 다운로드할 파일의 URL 설정
+    // link.download = ""; // 다운로드 속성 설정 (옵션: 파일 이름을 지정할 수 있음)
+    // link.style.display = "none"; // a 요소를 화면에 표시하지 않음
+    // link.appendChild(document.createTextNode("Download"));
 
     // 버튼 클릭 시 링크를 클릭하여 다운로드 실행
     button.onclick = function() {
-        link.click();
+        // link.click();
+        alert("ss")
     };
 
     // 텍스트 노드와 버튼을 li 요소에 추가
     listItem.appendChild(textNode);
     listItem.appendChild(button);
-    listItem.appendChild(link);
+    // listItem.appendChild(link);
 
     // li 요소를 secondRecord에 추가
     secondRecord.appendChild(listItem);
