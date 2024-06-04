@@ -61,16 +61,20 @@
   position: absolute;
   margin-top:20px;
 }
-
+input[type=text]{
+  margin-left:20px;
+}
 #address{
   height:40px;
   width:98%;
   margin:10px;
+
   border:2px rgb(37,86,246) solid;
   border-radius:10px;
-  color:rgb(37,86,246);
+  color:rgb(40,40,40);
   font-size:15px;
 }
+
 #fixbutton{
   height:46px;
   border:none;
@@ -114,11 +118,16 @@
   align-items: center;
   border-radius: 80px;
 }
-.flex{
+#add{
   display: flex;
   justify-content: space-between;
-  width:332px;
-
+  width:320px;
+  color:rgb(37,86,246);
+}
+.flex{
+  display: flex;
+  width:100%;
+  justify-content: center;
 }
 
 #submit-btn{
@@ -138,9 +147,7 @@
   overflow: hidden;
   border:0;
 }
-.container{
-  display: flex;
-}
+
 #logoZip{
   display: flex;
   justify-content: center;
