@@ -101,6 +101,22 @@
     </main>
     <!-- Firebase 초기화 스크립트 --> 
   <script>
+    function iframeTest(){
+    var message = 'Hello from parent window!';
+
+      console.log("작동완료")
+      window.parent.postMessage(message, '*');
+
+
+    // 부모 페이지로 메시지를 보낸 후 응답 처리
+
+      if (event.origin !== window.location.origin) return; // 보안을 위한 검사
+      console.log('Received message from parent:', event.data);
+
+      // 부모 페이지에 응답 보내기
+      event.source.postMessage('Response from child', event.origin);
+    
+  }
         let count = 0;
         let count2 = 0;
         let map;
@@ -109,9 +125,9 @@
             // 업로드된 폴더 목록 가져오기
             // 맵 초기화
             initMap();
-          iframeload();
+
           folderList()
-          iframeTest();
+          iframeTest()
         };  
 
 
@@ -153,19 +169,7 @@ async function uploadfile(file){
 
   console.log(result.resultData)
 }
-async function iframeload(){
-  window.addEventListener("message", function(message){
-    console.log("test_0603");
-      const msg = message;
-      const test = document.querySelector("#test");
-      test.appendChild(`<h1>${msg}</h1> `)
-    alert(message.data);
-    console.log(message.data)
-    window.parent.postMessage(text);
-    window.parent.postMessage(message.data);
-  })
 
-}
 async function folderList(){
   const folderList = document.getElementById("folderZip");
   const response = await fetch("https://gongdo.kr/api/datapi/place/list",{
@@ -209,19 +213,7 @@ async function folderList(){
     });
   });
 }
-function iframeTest(){
-  window.parent.postMessage(message, '*');
-    // 부모 페이지로 메시지를 보낸 후 응답 처리
-   
-      if (event.origin !== window.location.origin) return; // 보안을 위한 검사
-      console.log('Received message from parent:', event.data);
 
-      // 부모 페이지에 응답 보내기
-      event.source.postMessage('Response from child', event.origin);
-   
-
-   
-}
 
 function receiveMessage(event) {
   event.source.postMessage(
