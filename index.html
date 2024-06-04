@@ -78,6 +78,7 @@
                 <div id="secondwindowAddress"></div>
                 <div id="secondwindowTotal"></div>
               </div>
+              <div id="secondRecord"></div>
             </div>
             </div>
             
@@ -157,8 +158,8 @@
 
 function printMessage(){
   console.log(message.data);
-  window.addEventListener("message", function(message){
-    console.log(message.data);
+  window.addEventListener("message", function(e){
+    console.log(e.data);
 })
 }
 
@@ -482,9 +483,10 @@ async function opensecondwindow(resultLabel, resultAddress, resultId,resultLogo)
   const secondImg = document.getElementById('secondwindowLogo');
   const secondAddress = document.getElementById('secondwindowAddress');
   const secondTotal = document.getElementById('secondwindowTotal');
+  const secondRecord = document.getElementById('secondwindowRecord');
   const secondwindow = document.getElementById('secondwindow'); // secondwindow 요소를 참조
   closedWindow()
-  console.log(resultId)
+
   secondwindow.style.display = "flex";
   secondwindowhead.innerHTML = '<h1>' + resultLabel + '</h1>';
 
