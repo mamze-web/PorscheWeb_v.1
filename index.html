@@ -82,6 +82,7 @@
             </div>
             </div>
             <hr>
+            <br>
             <div class="flex">
             <div id="secondwindowRecord"></div>
           </div>
@@ -162,9 +163,9 @@
 
 
 function printMessage(){
-  window.addEventListener("message", function(e){
-    console.log(e.data);
-    alert("wow")
+  window.addEventListener('message', function(event) {
+            // 메시지 수신
+            console.log('Received message:', event.data);
 })
 }
 
@@ -449,10 +450,10 @@ async function opensecondwindow(resultLabel, resultAddress, resultId,resultLogo)
   const secondRecord = document.getElementById('secondwindowRecord');
   const secondwindow = document.getElementById('secondwindow'); // secondwindow 요소를 참조
   closedWindow()
-
+  // secondRecord.innerHTML="";
   secondwindow.style.display = "block";
   secondwindowhead.innerHTML = '<h1>' + resultLabel + '</h1>';
-  secondRecord.innerHtml="";
+  
   // 기존에 있는 이미지를 모두 제거합니다.
   while (secondImg.firstChild) {
     secondImg.removeChild(secondImg.firstChild);

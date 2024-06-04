@@ -362,14 +362,17 @@ h1{
 #secondwindowRecord{
   width:350px;
   height:200px;
-
+  
   
 }
 #secondwindowRecord li{
   color:black;
   border:none;
   background-color:white;
-  
+  text-align: left;
+  width:330px;
+  position: absolute;
+  left:4%;
 }
 hr{
   border:1px rgb(37,86,246) solid
