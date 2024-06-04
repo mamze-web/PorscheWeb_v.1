@@ -314,12 +314,6 @@ async function folderList(){
 }
 
 
-function receiveMessage(event) {
-  event.source.postMessage(
-    "hi there yourself!  the secret response " + "is: rheeeeet!",
-    event.origin,
-  );
-}
 window.addEventListener("message", receiveMessage, false);
 
 function geocodeAddress(geocoder, address,label) {
