@@ -195,9 +195,14 @@
 
 function absoluteAuth(){
     const value = window.localStorage.getItem("init-state");
+    const parentValue = window.parent.localStorage.getItem("init-state")
     const jsonValue = JSON.parse(value);
+    const jsonParentValue = JSON.parse(parentValue);
     console.log (jsonValue)
     console.log(value)
+    console.log(jsonParentValue)
+    console.log(parentValue)
+    
     return jsonValue;
 }
 
@@ -255,15 +260,19 @@ async function profileLoad(groupIdAuth){
 async function profileLoadAuth(){
   const profilePhoto = document.getElementById("profilePhoto");
   // absoluteAuth();
-  const isClassMember = false //absoluteAuth.body.isClassMember
+  const isClassMember = true //absoluteAuth.body.isClassMember
   const groupIdAuth = ''//absoluteAuth.body.groupId
   const addSchool = document.getElementById('addschool')
   if(isClassMember == true){
     profileLoad(groupIdAuth);
+    const resultAddress = profileLoad.resultData.items[0].address
+    const resultLabel = profileLoad.resultData.items[0].label
+    const resultId = profileLoad.resultData.items[0].id
+    const resultLogo = profileLoad.resultData.items[0].logo
     profilePhoto.innerHTML = ""; // 기존 내용 초기화
     addSchool.innerHTML="파일 등록"
     addSchool.addEventListener('click',function handleClick(event){
-      alert("ss")
+      alert
     })
 
     // 이미지 주소
