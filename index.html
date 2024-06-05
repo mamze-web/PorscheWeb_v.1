@@ -192,17 +192,23 @@
           // iframeTest()
           profileLoadAuth()
         };  
+function printMessage(){
 
+let passData = { returnValue : 200 };
+window.parent.postMessage(passData, '*');
+
+window.addEventListener('message', function(e) {
+  console.log(e.data);
+})
+        }
 function absoluteAuth(){
     const value = window.localStorage.getItem("init-state");
     const jsonValue = JSON.parse(value);
     console.log (jsonValue)
     console.log(value)
-    
-    const parentValue = window.parent.localStorage.getItem("init-state")
-   
-    const jsonParentValue = JSON.parse(parentValue);
 
+    const parentValue = window.parent.localStorage.getItem("init-state")
+    const jsonParentValue = JSON.parse(parentValue);
     console.log(jsonParentValue)
     console.log(parentValue)
     
