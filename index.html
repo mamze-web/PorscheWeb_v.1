@@ -195,11 +195,14 @@
 
 function absoluteAuth(){
     const value = window.localStorage.getItem("init-state");
-    const parentValue = window.parent.localStorage.getItem("init-state")
     const jsonValue = JSON.parse(value);
-    const jsonParentValue = JSON.parse(parentValue);
     console.log (jsonValue)
     console.log(value)
+    
+    const parentValue = window.parent.localStorage.getItem("init-state")
+   
+    const jsonParentValue = JSON.parse(parentValue);
+
     console.log(jsonParentValue)
     console.log(parentValue)
     
@@ -645,17 +648,13 @@ function initMap() {
         disableDefaultUI: true,
         styles:[
   {
-    "elementType": "geometry",
-    "stylers": [
-  {
     "featureType": "road",
+    "elementType": "geometry",
     "stylers": [
       {
         "visibility": "off"
       }
     ]
-  }
-]
   }
 ]})
 
