@@ -195,7 +195,7 @@
 function printMessage(){
 
   let passData = { returnValue : 200 };
-  window.parent.postMessage(passData, 'https://gongdo.kr');
+  window.parent.postMessage(passData, '*');
 
   window.addEventListener('message', function(e) {
     console.log(e.data);
