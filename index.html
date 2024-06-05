@@ -1,23 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>자식 페이지</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
 </head>
 <body>
-    <h1>자식 페이지</h1>
-    <div id="message"></div>
-
-    <script>
-        // 부모 페이지로부터 메시지 받기
-        window.addEventListener('message', function(event) {
-            if (event.origin !== window.location.origin) return; // 보안을 위한 검사
-            document.getElementById('message').innerText = 'Received message from parent: ' + event.data;
-
-            // 부모 페이지에 응답 보내기
-            event.source.postMessage('Response from child', event.origin);
-        }, false);
-    </script>
+  Test
 </body>
 </html>
