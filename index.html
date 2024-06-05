@@ -544,7 +544,7 @@ async function opensecondwindow(resultLabel, resultAddress, resultId, resultLogo
     // 버튼 요소 생성 및 설정
     const button = document.createElement("button");
     button.textContent = "그래프 보기"; // 버튼에 텍스트 설정
-
+    button.style.fontSize="8px;"
     // 버튼 클릭 시 그래프 표시/숨김 토글
     button.onclick = function() {
       const graphDiv = listItem.nextElementSibling;
@@ -558,7 +558,7 @@ async function opensecondwindow(resultLabel, resultAddress, resultId, resultLogo
         const resultPreview = result.resultData.items[i].dataPackage.preview
         const resultZip = result.resultData.items[i].dataPackage.zip
         console.log(resultPreview)
-        newGraphDiv.innerHTML = "<div class'flex'><img id='previewGraph'src="+resultPreview+" /><br><a href="+resultZip+" download id='dnBtn'>다운로드</a> "; // 예시 텍스트 설정
+        newGraphDiv.innerHTML = "<div class'flex'><img id='previewGraph'src="+resultPreview+" /><br><a href="+resultZip+" download='file.zip' id='dnBtn'>다운로드</a> "; // 예시 텍스트 설정
         newGraphDiv.style.padding = "10px"; // 스타일 설정
         newGraphDiv.style.marginTop = "10px"; // 스타일 설정
         listItem.insertAdjacentElement('afterend', newGraphDiv); // 형제 요소로 추가
