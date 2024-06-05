@@ -160,7 +160,7 @@
     </div>
     
     </main>
-    <button onclick="printMessage()">test</button>
+    <button onclick=" absoluteAuth()">test</button>
     <!-- Firebase 초기화 스크립트 --> 
   <script>
   //   function iframeTest(){
@@ -189,17 +189,12 @@
           folderList()
           // iframeTest()
           profileLoad()
-          // printMessage()
         };  
 
-function printMessage(){
-
-  let passData = { returnValue : 200 };
-  window.parent.postMessage(passData, '*');
-
-  window.addEventListener('message', function(e) {
-    console.log(e.data);
-  })
+function absoluteAuth(){
+const value = window.localStorage.getItem("init-state");
+const jsonValue = JSON.parse(value);
+console.log (jsonValue)
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -544,7 +539,7 @@ async function opensecondwindow(resultLabel, resultAddress, resultId, resultLogo
     // 버튼 요소 생성 및 설정
     const button = document.createElement("button");
     button.textContent = "그래프 보기"; // 버튼에 텍스트 설정
-    button.style.fontSize="8px;"
+
     // 버튼 클릭 시 그래프 표시/숨김 토글
     button.onclick = function() {
       const graphDiv = listItem.nextElementSibling;
