@@ -10,6 +10,7 @@
     overflow: hidden;
     background-color:rgb(230,230,230);
 }
+
 #file-list{
   color:white;
 }
@@ -22,11 +23,50 @@
   height:150%;
 
 }
+.suggestions {
+  margin-top:10px;
+  font-family: 'Roboto', sans-serif;
+}
+input{
+  padding-left:20px;
+}
+h4{
+  margin:20px 0 20px 0;
+}
+
+.suggestion-item {
+  text-align: left;
+  height:28px;
+  padding:10px;
+  display: flex;
+  align-items: center;
+  width:394px;
+  border: none;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+  margin:10px;
+  border-radius: 10px;
+
+}
+.suggestion-item-click{
+  background-color:rgba(37,86,246,0.4);
+  border:none;
+}
+
+.suggestion-item:hover {
+  background-color:rgba(37,86,246,0.4);
+}
 .flex2{
   display: flex;
   justify-content: center;
 
   width:322px;
+}
+.flex3{
+  display: flex;
+  justify-content: center;
+  width:475px;
 }
 #profilePhoto{
   width:120px;
@@ -73,7 +113,7 @@
   border:2px rgb(37,86,246) solid;
   border-radius:10px;
   color:rgb(40,40,40);
-  font-size:15px;
+  font-size:20px;
 }
 
 #fixbutton{
@@ -100,6 +140,7 @@
 #display-block{
   display: block;
   text-align: left;
+  height:100px;
 }
 #display-flex{
   display: flex;
@@ -131,6 +172,13 @@
   width:100%;
   justify-content: center;
 }
+.flex4{
+  display: flex;
+  width:80%;
+  justify-content: space-between;
+  padding-top:20px;
+  font-weight: bold;
+}
 #textBetween{
   display: flex;
   justify-content: space-between;
@@ -149,10 +197,14 @@
 }
 #submit-btn{
   background-color:rgb(37,86,246);
+  display: flex;
+align-items: center;
+justify-content: center;
   color:white;
   border:none;
-  width:300px;
-  height:46px;
+  margin-top:50px;
+  width:420px;
+  height:48px;
   font-size:20px;
   border-radius:10px;
 }
@@ -210,11 +262,12 @@
   color:rgb(37,86,246);
 }
 #label{
+  font-size:20px;
   background-color: white;
   display: flex;
   justify-content: center;
-  height:40px;
-  width:300px;
+  height:48px;
+  width:414px;
   border:2px rgb(37,86,246) solid;
   border-radius:10px;
 }
@@ -314,7 +367,15 @@ text-align: right;
   z-index: inher
 }
 
+#previewGraph{
+  width:300px;
+  height:168.75px;
 
+}
+.graph-div{
+  background-color:white;
+  border:none;
+}
 .right_info_moved{
   background-color:white;
 }
@@ -332,8 +393,8 @@ h1{
 #secondwindow{
   text-align: center;
   color:rgb(37,86,246);
-  width: 130%;
-  height:100%;
+  width: 475px;
+  height:724px;
   position: absolute;
   background-color:rgb(246,248,255);
   display: none;
@@ -351,9 +412,14 @@ h1{
 }
 #headList{
   display: flex;
-  height:300px;
-  justify-content: space-between;
+  width: 100%;
+  height:200px;
+  justify-content: center;
   align-items: center;
+}
+#headText{
+  text-align: left;
+  width:200px;
 }
 #secondwindowLogo{
   width:130px;
@@ -373,20 +439,29 @@ h1{
 #secondwindowRecord{
   width:350px;
   height:200px;
-  
+  list-style-type: none;
+
+}
+#dnBtn{
+  width:413px;
+  height:48px;
+  background-color:rgb(37,86,246);
+  color:white;
 }
 #secondwindowRecord li{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding:20px;
   color:rgb(37,86,246);
   border:none;
   background-color:white;
   text-align: left;
-  width:330px;
-  position: absolute;
-  left:4.5%;
+  width:310px;
   border-radius: 10px;
-  height:40px;
+  height:0px;
   font-size:15px;
-
+  margin:5px 0;
 }
 #secondwindowRecord button{
   background-color:rgb(37,86,246);
