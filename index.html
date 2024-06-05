@@ -6,6 +6,19 @@
   <title>Document</title>
 </head>
 <body>
-  Test
+  <input type="text" id="toParentText">
+  <input type="button" id="toParentBtn" value="부모에게 전송">
+  <div style="background-color:green; width:500px; height:150px; text-align:center; " id="fromParentDiv">
+    부모에게서 온 값입니다.
+  </div>
 </body>
 </html>
+<script>
+  window.addEventListener("message",function(message){
+    $("#fromParentDiv").text(message.data);
+  })
+  $("#toParentBtn").click(function(){
+    text=$("#toParentText").val();
+    window.parent.postMessage(text);
+  })
+</script>

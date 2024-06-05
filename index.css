@@ -13,10 +13,7 @@
 #file-list{
   color:white;
 }
-#addressZip{
-  display: flex;
-  width:332px;
-}
+
 #address-details{
   display: flex;
 }
@@ -28,6 +25,7 @@
 .flex2{
   display: flex;
   justify-content: center;
+
   width:322px;
 }
 #profilePhoto{
@@ -36,7 +34,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin:40px 0px 0px 0px;
+ margin-top:40px;
 }
 #ifinfomation{
   display: flex;
@@ -68,9 +66,9 @@
 }
 
 #address{
-  height:40px;
-  width:98%;
-  margin:10px;
+  height:46px;
+  width:338px;
+  margin:10px 0px 10px 0px;
   background-color: white;
   border:2px rgb(37,86,246) solid;
   border-radius:10px;
@@ -79,11 +77,11 @@
 }
 
 #fixbutton{
-  height:46px;
+  height:48px;
   border:none;
-  width:100px;
+  width:62px;
   font-size:20px;
-  margin:10px;
+  margin:10px 0px  10px 10px;
   background-color:rgb(37,86,246);
   color:white;
   border-radius:10px;
@@ -125,7 +123,7 @@
 #add{
   display: flex;
   justify-content: space-between;
-  width:320px;
+  width:420px;
   color:rgb(37,86,246);
 }
 .flex{
@@ -195,13 +193,13 @@
 
 #addFolderDisplay{
   z-index:4;
-  width:400px;
-  height:150px;
+  width:475px;
+  height:145px;
   position: absolute;
-  top:10%;
+  top:0%;
   border-radius: 20px;
-  left:45%;
-  display: flex;
+  left:105%;
+
   align-items: center;
   justify-content: center;
   display: none;
@@ -255,9 +253,7 @@
   bottom:30%;
   background-color:white;
 }
-li{
-  color:white;
-}
+
 #addwindow{
   position:fixed;
   width:80%;
@@ -276,10 +272,7 @@ li{
   background-color:black;
 }
 #line{
-  position:absolute;
-  top:39%;
-  width:80%;
-  left:10%;
+  width:282px;
   border-top:2px rgb(37,86,246) solid;
 }
 hr{
@@ -345,6 +338,7 @@ h1{
   background-color:rgb(246,248,255);
   display: none;
   left:105%;
+  top:0;
   border-radius: 10px;
   justify-content: center;
 
@@ -464,12 +458,13 @@ hr{
 #addschool{
   background-color:rgb(37,86,246);
   border: none;
-  width:280px;
-  height:70px;
+  width:246px;
+  height:48px;
   border-radius: 10px;
   font-size:25px;
   color: white;
   font-weight: bold;
+  margin:50px 0 30px 0;
 }
 #addschool:hover{
   background-color:rgb(27,76,236);
@@ -484,10 +479,25 @@ hr{
 }
 #folderZip{
   overflow: auto;
-  width:90%;
-  height:50%;
+  width:292px;
+  height:280px;
   border-radius: 10px;
 
+}
+#folderZip li{
+  height:59px;
+  border-radius: 10px;
+    border:2px rgb(37,86,246) solid;
+  display: flex;
+  align-items: center;
+  margin:7px 0px;
+  justify-content: space-between;
+  color:rgb(37,86,246);
+  padding:0px 20px;
+  list-style: none;
+}
+#folderZip li img{
+  width:35px;
 }
 
 ::-webkit-scrollbar{
@@ -499,17 +509,6 @@ hr{
 ::-webkit-scrollbar-thumb{
   background-color:#F3E5AB;
   border-radius: 10px;
-}
-li{
-  border:2px rgb(37,86,246) solid;
-  display: flex;
-  align-items: center;
-  margin:0% 5% 10% 5%;
-  justify-content: space-between;
-  height:100px;
-  color:rgb(37,86,246);
-  padding:0px 20px;
-  list-style: none;
 }
 a{
   text-decoration-line:none;
