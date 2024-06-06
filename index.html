@@ -199,7 +199,7 @@ let passData = { returnValue : 200 };
 window.parent.postMessage(passData, '*');
 
 window.addEventListener('message', function(e) {
-  console.log(e.data);
+  console.log(event.data);
 })
         }
 function absoluteAuth(){
