@@ -195,17 +195,17 @@
         };  
 function printMessage(){
 
-let passData = { returnValue : 200 };
-window.parent.postMessage(passData, '*');
-
-window.addEventListener('message', function(e) {
   console.log(event.data);
-})
+  console.log("this is Test")
+  // event.source.postMessage(
+  //   "hi there yourself!  the secret response " + "is: rheeeeet!",
+  //   event.origin,
+  // );
         }
 function absoluteAuth(){
     const value = window.localStorage.getItem("init-state");
     const jsonValue = JSON.parse(value);
-    console.log (jsonValue)
+    console.log(jsonValue)
     console.log(value)
 
     const parentValue = window.parent.localStorage.getItem("init-state")
