@@ -31,7 +31,7 @@
         <div id="profileWarning"></div>
       </div>
             <div class="flex2">
-              <button id="addschool">주소 찾기</button>
+              <button id="addschool" onclick="addschool()">주소 찾기</button>
             </div>
             <div class="flex2">
             <div id="line"></div>
@@ -68,14 +68,14 @@
                   <div id="info-form-hidden">
                 <!-- <div id="info-form-flex"> -->
                   
-                <!-- <div id="logoZip">
+                <div id="logoZip">
                  
                   <br>
                   <label id="logolabel" for="logo">
                     <img id="preview" />
                   </label>
                   <input type="file" id="logo" name="logo"onchange="readURL(this);" ><br><br>
-              </div> -->
+              </div>
               <div class="flex3">
                 <div id="suggestions" class="suggestions"></div>
               </div>
@@ -195,28 +195,28 @@
 function printMessage(){
   console.log(resultAuthData)
         }
-function absoluteAuth(){
-    const value = window.localStorage.getItem("init-state");
-    const jsonValue = JSON.parse(value);
-    console.log(jsonValue)
-    console.log(value)
+// function absoluteAuth(){
+//     const value = window.localStorage.getItem("init-state");
+//     const jsonValue = JSON.parse(value);
+//     console.log(jsonValue)
+//     console.log(value)
 
-    const parentValue = window.parent.localStorage.getItem("init-state")
-    const jsonParentValue = JSON.parse(parentValue);
-    console.log(jsonParentValue)
-    console.log(parentValue)
+//     const parentValue = window.parent.localStorage.getItem("init-state")
+//     const jsonParentValue = JSON.parse(parentValue);
+//     console.log(jsonParentValue)
+//     console.log(parentValue)
     
-    return jsonValue;
-}
+//     return jsonValue;
+// }
 
-async function absoluteAuthHardCoding(){
-  const groupId = [
-    'default',
-    'true',
-    'false'
-  ]
-  return groupId
-}
+// async function absoluteAuthHardCoding(){
+//   const groupId = [
+//     'default',
+//     'true',
+//     'false'
+//   ]
+//   return groupId
+// }
 document.addEventListener('DOMContentLoaded', () => {
       const submitBtn = document.getElementById('submit-btn');
 
@@ -272,42 +272,12 @@ async function profileLoad(groupIdAuth){
 async function profileLoadAuth() {
   const profilePhoto = document.getElementById("profilePhoto");
   const addSchool = document.getElementById('addschool');
-
+  console.log(globalResultAuthData)
   try {
-    const result = await absoluteAuthHardCoding();
     const AuthData = globalResultAuthData
     const groupIdAuth = AuthData.body.groupId
     const isClassMember = AuthData.body.isClassMember
     console.log(groupIdAuth , isClassMember)
-    if (isClassMember == 'true') {
-      const results = await profileLoad(groupIdAuth);
-      console.log(results)
-      const resultAddress = results.resultData.items[0].address
-      const resultLabel = results.resultData.items[0].label
-      const resultId = results.resultData.items[0].id
-    // const resultLogo = profileLoad.resultData.items[0].logo
-
-      profilePhoto.innerHTML = "";
-      addSchool.innerHTML = "파일 등록";
-      addSchool.addEventListener('click', function handleClick(event) {
-        openMypage(resultAddress , resultLabel , results) // alert 함수는 메시지를 받아야 함
-      });
-
-      const imageUrl = 'https://i.namu.wiki/i/t08Cz3dQT_hWZCvXmEv6KEWUS5OIHTXCbcNvOXuweb97vPlgA6WvlqKCEQRtW-aAX91Zx-zML18v24AN5HWV7w.webp';
-
-      const img = document.createElement("img");
-      img.src = imageUrl;
-      img.alt = "Profile Photo";
-      img.width = 100;
-      img.style.borderRadius = "50%";
-      img.style.border = "2px rgb(37,86,246) solid";
-      img.style.padding = "10px";
-      img.style.backgroundColor = "white";
-
-      profilePhoto.appendChild(img);
-    }else{
-      
-    }
   } catch (error) {
     console.error(error);
   }
@@ -434,6 +404,7 @@ function geocodeAddress(geocoder, address,label) {
                 }
           }
             )
+            folderList()
             }
 
 
