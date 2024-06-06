@@ -1,8 +1,9 @@
 
   main{
     font-family: "Noto Sans KR", sans-serif;
-    width:917px;
-    height:796px;
+    max-width:917px;
+    max-height:796px;
+    height:100vw;
     display: flex;
     justify-content: center;
     border:10px solid red;
@@ -67,6 +68,13 @@ h4{
   display: flex;
   justify-content: center;
   width:475px;
+}
+.flexRecord{
+  display: flex;
+  justify-content: center;
+  width:475px;
+  height:300px;
+  overflow: auto;
 }
 #profilePhoto{
   width:120px;
@@ -205,7 +213,7 @@ align-items: center;
 justify-content: center;
   color:white;
   border:none;
-  margin-top:50px;
+  margin-top:20px;
   width:420px;
   height:48px;
   font-size:20px;
@@ -299,7 +307,7 @@ justify-content: center;
   justify-content: space-around;
 }
 .addFolderDisplay-click{
-  height:500px !important;
+  height:510px !important;
 
 }
 
