@@ -281,7 +281,7 @@ function encodeZIPToBase64(file) {
 async function recordUploads(base64String){
   const recordFile = base64String
   const today = getCurrentDate();
-  const groupIdAuth = 'default'//globalResultAuthData.body.groupId
+  const groupIdAuth = globalResultAuthData.body.groupId
   console.log(recordFile)
   console.log(myLabel)
   console.log(myPlace)
