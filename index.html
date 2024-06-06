@@ -162,7 +162,7 @@
     </div>
     
     </main>
-    <button onclick=" receiveMessage('message', receiveMessage, false)">test</button>
+    <button onclick="printMessage">test</button>
     <!-- Firebase 초기화 스크립트 --> 
   <script>
   //   function iframeTest(){
@@ -193,12 +193,7 @@
           profileLoadAuth()
         };  
 function printMessage(){
-  console.log(event.data);
-  console.log("this is Test")
-  // event.source.postMessage(
-  //   "hi there yourself!  the secret response " + "is: rheeeeet!",
-  //   event.origin,
-  // );
+  console.log(resultAuthData)
         }
 function absoluteAuth(){
     const value = window.localStorage.getItem("init-state");
@@ -415,8 +410,8 @@ function AuthEvent(event) {
   //   "hi there yourself!  the secret response " + "is: rheeeeet!",
   //   event.origin,
   // );
-  const resultData = event.data
-  return resultData;
+  const resultAuthData = event.data
+  return resultAuthData;
 }
 
 window.addEventListener("message", receiveMessage, false);
