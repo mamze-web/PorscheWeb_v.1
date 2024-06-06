@@ -179,7 +179,8 @@
       // );
       
       globalResultAuthData = JSON.parse(event.data); // 전역 변수에 값 할당
-      
+      isAuth = globalResultAuthData.body.isAuth
+      console.log(isAuth)
     }
 
     window.addEventListener("message", AuthEvent, false);
@@ -251,16 +252,17 @@ let recordZip;
 let myLabel;
 let myPlace;
 let base64File
-
+let pngBase64String
+let isAuth
 document.getElementById('recordUploads').addEventListener('change', function(event) {
     const file = event.target.files[0];
 
-    // 파일이 존재하고 확장자가 .zip 인지 확인
+    
     if (file && file.name.endsWith('.zip')) {
-        zipFile = file;  // 파일을 변수에 저장
+        zipFile = file;  
         console.log('ZIP file selected:', zipFile);
 
-        // ZIP 파일을 Base64로 인코딩하는 함수 호출
+    
         encodeZIPToBase64(zipFile);
     } else {
         console.error('Please provide a ZIP file.');
@@ -271,11 +273,11 @@ function encodeZIPToBase64(file) {
     const reader = new FileReader();
 
     reader.onload = function(e) {
-        const base64String = e.target.result.split(',')[1];  // data URI 접두사를 제외한 base64 문자열 가져오기
+        const base64String = e.target.result.split(',')[1];
         recordUploads(base64String)
     };
 
-    reader.readAsDataURL(file);  // 파일을 data URL로 읽기 시작
+    // reader.readAsDataURL(file); 
 }
 
 async function recordUploads(base64String){
@@ -304,7 +306,20 @@ async function recordUploads(base64String){
 
   console.log(result.resultData)
 }
+document.getElementById('logo').addEventListener('change', function(event){
+  const file = event.target.files[0];
+  if (!file) {
+    base64Output.value = 'No file selected.';
+    return;
+  }
 
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    pngBase64String = event.target.result.split(',')[1];
+  };
+
+  reader.readAsDataURL(file);
+});
 function encodeZIPToBase64(file) {
   if (file && file.name.endsWith('.zip')) {
         const reader = new FileReader();
@@ -366,8 +381,6 @@ async function profileLoad(groupIdAuth){
   return result;
 }
 async function profileLoadAuth() {
-
-  console.log("s")
   try {
     const AuthData = globalResultAuthData
     // const groupIdAuth = AuthData.body.groupId
@@ -390,7 +403,6 @@ async function folderList() {
       groupId: ''
     })
   });
-
   const result = await response.json();
   console.log(result)
   const sortedItems = result.resultData.items.sort((a, b) => {
@@ -404,12 +416,21 @@ async function folderList() {
   folderList.innerHTML = ""; // 기존 내용 초기화
 
   sortedItems.forEach(item => {
+    
     const listItem = document.createElement("li"); // 새로운 li 요소 생성
     const nameItem = document.getElementById("nameItem");
-
+    const resultLogo = item.logo
+    const resultLabel = item.label;
+      const resultAddress = item.address;
+      const resultId = item.id;
     // 이미지 요소 생성 및 설정
+    const resultLatitude = parseFloat(item.geolocation.lat);
+    const resultLongitude = parseFloat(item.geolocation.lng);
+
+    // addMarker 함수 호출하여 마커 추가
+    addMarker({ lat: resultLatitude, lng: resultLongitude }, resultAddress, resultLogo);
     const img = document.createElement("img");
-    img.src = "https://firebasestorage.googleapis.com/v0/b/microschool-gongdo.appspot.com/o/prod%2Fres%2FPorsche%20web%2Ftest%2Fbee.png?alt=media&token=1ec62c16-c7b7-45e2-a9e5-0f5b0e286dbe"; // 이미지 URL 설정
+    img.src = 'data:image/png;base64,'+resultLogo
     img.alt = item.label; // 대체 텍스트 설정
     img.style.borderRadius = "50%"; // 동그랗게 설정
     listItem.appendChild(img); // 이미지를 li 요소에 추가
@@ -423,15 +444,14 @@ async function folderList() {
     // 클릭 이벤트 추가
     listItem.addEventListener('click', () => {
       document.getElementById('secondwindow').style.display = 'block';
-      const resultLabel = item.label;
-      const resultAddress = item.address;
-      const resultId = item.id;
-      const resultLogo = item.logo;
+     
       myLabel = resultLabel;
       myPlace = resultId;
       opensecondwindow(resultLabel, resultAddress, resultId, resultLogo);
     });
   });
+
+  
 }
 
 
@@ -450,7 +470,7 @@ function geocodeAddress(geocoder, address,label,logo) {
                 groupId: 'default',
                 form: {
                   label,
-                  logo,
+                  logo:pngBase64String,
                   address,
                   geolocation: {
                     lat,
@@ -483,6 +503,7 @@ function readURL(input) {
   } else {
     document.getElementById('preview').src = "";
   }
+
 }
 
 function initAutocomplete() {
@@ -578,7 +599,7 @@ function leftThing(){
 function closedLeftArrow(){
   secondwindow.style.display = "none";
 }
-async function opensecondwindow(resultLabel, resultAddress, resultId, resultLogo) {
+async function opensecondwindow(resultLabel, resultAddress, resultId, resultLogo,isAuth) {
   const secondwindowhead = document.getElementById('secondwindowHead');
   const secondImg = document.getElementById('secondwindowLogo');
   const secondAddress = document.getElementById('secondwindowAddress');
@@ -597,7 +618,7 @@ async function opensecondwindow(resultLabel, resultAddress, resultId, resultLogo
   }
 
   const img = document.createElement("img");
-  img.src = "https://firebasestorage.googleapis.com/v0/b/microschool-gongdo.appspot.com/o/prod%2Fres%2FPorsche%20web%2Ftest%2Fbee.png?alt=media&token=1ec62c16-c7b7-45e2-a9e5-0f5b0e286dbe"; // 이미지 URL 설정
+  img.src = 'data:image/png;base64,'+resultLogo
   img.alt = resultLabel; // 대체 텍스트 설정
   img.style.borderRadius = "50%"; // 동그랗게 설정
   secondImg.appendChild(img); // 이미지를 secondImg 요소에 추가
@@ -645,7 +666,9 @@ async function opensecondwindow(resultLabel, resultAddress, resultId, resultLogo
           newGraphDiv.classList.add('graph-div'); // 클래스 추가
           const resultPreview = result.resultData.items[i].dataPackage.preview;
           const resultZip = result.resultData.items[i].dataPackage.zip;
+          console.log(resultZip)
           console.log(resultPreview);
+          
           newGraphDiv.innerHTML = "<div class'flex'><img id='previewGraph' src=" + resultPreview + " /><br><a href=" + resultZip + " download='file.zip' id='dnBtn'>다운로드</a> "; // 예시 텍스트 설정
           newGraphDiv.style.padding = "10px"; // 스타일 설정
           newGraphDiv.style.marginTop = "10px"; // 스타일 설정
@@ -680,60 +703,56 @@ function sleep(ms) {
     const wakeUpTime = Date.now() + ms;
     while (Date.now() < wakeUpTime) {}
 }
-
 function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 37.5642135, lng: 127.0016985 },
-        zoom: 8,
-        disableDefaultUI: true,
-        styles:[
-  {
-    "featureType": "road",
-    "elementType": "geometry",
-    "stylers": [
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: { lat: 37.5642135, lng: 127.0016985 },
+    zoom: 8,
+    disableDefaultUI: true,
+    styles:[
       {
-        "visibility": "off"
+        "featureType": "road",
+        "elementType": "geometry",
+        "stylers": [
+          {
+            "visibility": "off"
+          }
+        ]
       }
     ]
-  }
-]})
+  });
 
+  // 마커 클러스터러 생성
+  markerCluster = new MarkerClusterer(map, [], {
+    imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+  });
+}
 
-// 마커 클러스터러 생성
-    markerCluster = new MarkerClusterer(map, markers, {
-        imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
-    });
-   
+// addMarker 함수 수정하여 마커 클릭 시 인포윈도우 표시
+function addMarker(location, address, resultLogo) {
+  const marker = new google.maps.Marker({
+    position: location,
+    map: map,
+    icon: {
+      url: 'data:image/png;base64,' + resultLogo,
+      scaledSize: new google.maps.Size(50, 50), // 이미지 크기 조절
+      origin: new google.maps.Point(0, 0), // 이미지의 원점 설정
+      anchor: new google.maps.Point(25, 25) // 이미지의 중심점 설정
     }
-   
-        // 맵에 마커 추가
-function addMarker(location, address,resultLogo,resultAddress) {
-    const marker = new google.maps.Marker({
-        position: location,
-        map: map,
-        icon: {
-        url:resultLogo ,
-        scaledSize: new google.maps.Size(50, 50), // 이미지 크기 조절
-        origin: new google.maps.Point(0, 0), // 이미지의 원점 설정
-        anchor: new google.maps.Point(25, 25) // 이미지의 중심점 설정
-    }
+  });
 
-
+  // 클릭 이벤트 리스너 추가
+  marker.addListener('click', function() {
+    const infowindow = new google.maps.InfoWindow({
+      content: address
     });
-    marker.addListener('click', function() {
-   alert(resultAddress)
-// 클릭한 마커 위에 인포윈도우 표시
-infowindow.open(map, marker);
-});
-// 마커 위치로부터 주소를 지오코딩하는 함수
+    infowindow.open(map, marker);
+  });
 
+  // 마커를 배열에 추가
+  markers.push(marker);
 
-
-
-markers.push(marker); // 마커를 배열에 추가
-
-// 클러스터러에 마커 추가
-markerCluster.addMarker(marker);
+  // 클러스터러에 마커 추가
+  markerCluster.addMarker(marker);
 }
 
     </script>
