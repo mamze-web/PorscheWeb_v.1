@@ -275,9 +275,10 @@ async function profileLoadAuth() {
 
   try {
     const result = await absoluteAuthHardCoding();
-    console.log(result)
-    const groupIdAuth = result[0];
-    const isClassMember = result[1];
+    const AuthData = globalResultAuthData
+    const groupIdAuth = AuthData.body.groupId
+    const isClassMember = AuthData.body.isClassMember
+    console.log(groupIdAuth , isClassMember)
     if (isClassMember == 'true') {
       const results = await profileLoad(groupIdAuth);
       console.log(results)
@@ -304,27 +305,8 @@ async function profileLoadAuth() {
       img.style.backgroundColor = "white";
 
       profilePhoto.appendChild(img);
-    } else{
-      const profileWarning = document.getElementById('profileWarning');
-      profileWarning.innerHTML = "*등록된 주소가 없습니다. ";
-      profilePhoto.innerHTML = "";
-      addSchool.innerHTML = "주소 추가";
-      addSchool.addEventListener('click', function handleClick(event) {
-        addschool();
-      });
-
-      const imageUrl = "https://firebasestorage.googleapis.com/v0/b/microschool-gongdo.appspot.com/o/prod%2Fres%2FPorsche%20web%2Ftest%2Fbee.png?alt=media&token=1ec62c16-c7b7-45e2-a9e5-0f5b0e286dbe";
-
-      const img = document.createElement("img");
-      img.src = imageUrl;
-      img.alt = "Profile Photo";
-      img.width = 100;
-      img.style.borderRadius = "50%";
-      img.style.border = "2px rgb(37,86,246) solid";
-      img.style.padding = "10px";
-      img.style.backgroundColor = "white";
-
-      profilePhoto.appendChild(img);
+    }else{
+      
     }
   } catch (error) {
     console.error(error);
@@ -403,6 +385,8 @@ async function folderList(){
 }
 
 
+let globalResultAuthData; // 전역 변수 선언
+
 function AuthEvent(event) {
   console.log(event.data);
   console.log("this is Test")
@@ -410,20 +394,12 @@ function AuthEvent(event) {
   //   "hi there yourself!  the secret response " + "is: rheeeeet!",
   //   event.origin,
   // );
-  const resultAuthData = event.data
-  return resultAuthData;
+  
+  globalResultAuthData = JSON.parse(event.data); // 전역 변수에 값 할당
 }
 
 window.addEventListener("message", AuthEvent, false);
-// 버튼 요소 가져오기
-const button = document.getElementById("authButton");
-// 버튼에 클릭 이벤트 리스너 추가
-button.addEventListener("click", function() {
-  AuthEvent(); // AuthEvent 함수 호출
-});
 
-
-window.addEventListener("message", AuthEvent, false);
 
 function geocodeAddress(geocoder, address,label) {
             geocoder.geocode({ 'address': address }, function(results, status) {
