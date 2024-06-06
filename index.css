@@ -20,7 +20,7 @@
 }
 #preview{
   width:cover;
-  height:150%;
+  height:170%;
 
 }
 .suggestions {
@@ -80,7 +80,9 @@ h4{
   display: flex;
   justify-content: center;
 }
-
+#logolabel{
+  background-color: black;
+}
 #logolabel:hover{
   background-color:rgb(0,0,0,0.2);
 }
@@ -141,6 +143,7 @@ h4{
   display: block;
   text-align: left;
   height:100px;
+  width:300px;
 }
 #display-flex{
   display: flex;
@@ -223,6 +226,7 @@ justify-content: center;
   justify-content: center;
   align-items: center;
   width:100%;
+  margin-top:50px;
 }
 #addressDisplay{
   background-color:white;
@@ -267,7 +271,7 @@ justify-content: center;
   display: flex;
   justify-content: center;
   height:48px;
-  width:414px;
+  width:200px;
   border:2px rgb(37,86,246) solid;
   border-radius:10px;
 }

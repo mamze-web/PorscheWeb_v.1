@@ -68,6 +68,11 @@
                   <div id="info-form-hidden">
                 <!-- <div id="info-form-flex"> -->
                   
+                
+              <div class="flex3">
+                <div id="suggestions" class="suggestions"></div>
+              </div>
+              <div class="flex">
                 <div id="logoZip">
                  
                   <br>
@@ -76,14 +81,12 @@
                   </label>
                   <input type="file" id="logo" name="logo"onchange="readURL(this);" ><br><br>
               </div>
-              <div class="flex3">
-                <div id="suggestions" class="suggestions"></div>
-              </div>
-              <div class="flex">
+                <div class="flex">
                   <div id="display-block">
-                  <label for="label" id="displayName"><h4>별명 등록하기</h4></label>
+                  <label for="label" id="displayName"><h4>정보 등록하기</h4></label>
                   <input type="text" id="label" name="label">
                   </div>
+                </div>
               </div>
                 <!-- </div> -->
                 <div class="flex">
@@ -440,7 +443,7 @@ async function folderList() {
     listItem.appendChild(textNode); // 텍스트 노드를 li 요소에 추가
 
     folderList.appendChild(listItem); // 생성한 li 요소를 folderList에 추가
-
+    document.getElementById('preview').src = 'https://firebasestorage.googleapis.com/v0/b/microschool-gongdo.appspot.com/o/prod%2Fres%2FPorsche%20web%2Fimg%2Fuser.png?alt=media&token=2a50dc30-9c41-46f3-8ea1-77ee170fc29b'
     // 클릭 이벤트 추가
     listItem.addEventListener('click', () => {
       document.getElementById('secondwindow').style.display = 'block';
@@ -496,6 +499,7 @@ function geocodeAddress(geocoder, address,label,logo) {
 function readURL(input) {
   if (input.files && input.files[0]) {
     var reader = new FileReader();
+    
     reader.onload = function(e) {
       document.getElementById('preview').src = e.target.result;
     };
