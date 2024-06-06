@@ -284,6 +284,7 @@ function encodeZIPToBase64(file) {
 }
 
 async function recordUploads(base64String){
+  if(isAuth==true){
   const recordFile = base64String
   const today = getCurrentDate();
   const groupIdAuth = globalResultAuthData.body.groupId
@@ -307,7 +308,10 @@ async function recordUploads(base64String){
           })
   const result= await response.json()
 
-  console.log(result.resultData)
+  console.log(result.resultData)}
+  else{
+    alert("로그인이 필요합니다.")
+  }
 }
 document.getElementById('logo').addEventListener('change', function(event){
   const file = event.target.files[0];
@@ -553,11 +557,16 @@ function initAutocomplete() {
   
 
 function addschool(){
+  if(isAuth==true){
   secondwindow.classList.toggle('secondwindow-click',false)
   let addFolderDisplay = document.getElementById('addFolderDisplay');
   addFolderDisplay.style.display="block"
   
   document.getElementById('secondwindow').style.display = 'none';
+  }
+  else{
+    alert("로그인해주세요!");
+  }
 }
 function closedWindow(){
   addFolderDisplay.style.display="none"
