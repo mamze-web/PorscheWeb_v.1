@@ -162,8 +162,7 @@
     </div>
     
     </main>
-    <button onclick=" absoluteAuth()">test</button>
-    <button onclick=" receiveMessage()">test</button>
+    <button onclick=" receiveMessage('message', receiveMessage, false)">test</button>
     <!-- Firebase 초기화 스크립트 --> 
   <script>
   //   function iframeTest(){
@@ -409,13 +408,15 @@ async function folderList(){
 }
 
 
-function receiveMessage(event) {
+function AuthEvent(event) {
   console.log(event.data);
   console.log("this is Test")
   // event.source.postMessage(
   //   "hi there yourself!  the secret response " + "is: rheeeeet!",
   //   event.origin,
   // );
+  const resultData = event.data
+  return resultData;
 }
 
 window.addEventListener("message", receiveMessage, false);
