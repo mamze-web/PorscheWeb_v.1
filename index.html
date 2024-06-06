@@ -25,7 +25,7 @@
         <div id="leftThing" > 
           <br>
           <div class="flex2">
-          <div id="profilePhoto"></div>
+          <div id="profileName"></div>
         </div>
         <div class="flex2">
         <div id="profileWarning"></div>
@@ -124,7 +124,10 @@
             <div class="flex">
               <div id="textBetween">
             <h1 id="headText2">등록한 데이터</h1>
-            <button id="addRecord">등록 +</button>
+            <div id="recordUploadsZip">
+              <input id="recordUploads" type="file" onchange="recordUploads()">
+              <label id="recordLabel" for="recordUploads">등록 +</label>
+            </div>
           </div>
             </div>
             <div class="flex3">
@@ -165,6 +168,23 @@
     <button id="authButton" onclick="printMessage()">Auth!</button>
     <!-- Firebase 초기화 스크립트 --> 
   <script>
+    let globalResultAuthData; // 전역 변수 선언
+
+    function AuthEvent(event) {
+      console.log(event.data);
+      console.log("this is Test")
+      // event.source.postMessage(
+      //   "hi there yourself!  the secret response " + "is: rheeeeet!",
+      //   event.origin,
+      // );
+      
+      globalResultAuthData = JSON.parse(event.data); // 전역 변수에 값 할당
+      
+    }
+
+    window.addEventListener("message", AuthEvent, false);
+
+
   //   function iframeTest(){
   //   var message = 'Hello from parent window!';
   //     window.parent.postMessage(message, '*');
@@ -217,24 +237,20 @@ function printMessage(){
 //   ]
 //   return groupId
 // }
-document.addEventListener('DOMContentLoaded', () => {
-      const submitBtn = document.getElementById('submit-btn');
+function getCurrentDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // getMonth()는 0부터 11까지 반환하므로 +1이 필요합니다.
+    const day = String(today.getDate()).padStart(2, '0');
 
-      submitBtn.addEventListener('click', () => {
-          // Get values from the input fields
-          const logo = document.getElementById('logo').value;
-          const address = document.getElementById('address').value;
-          const label = document.getElementById('label').value;
+    return `${year}년${month}월${day}일`;
+}
 
-          // Store values in variables
-          var geocoder = new google.maps.Geocoder();
-        
-          geocodeAddress(geocoder, address,label);
-          
-          
-});})
-
-async function uploadfile(file){
+async function recordUploads(){
+  const recordFile = document.getElementById('recordUploads').value
+  const groupIdAuth = globalResultAuthData.body.groupId
+  const today = getCurrentDate()
+  alert(today)
   const response = await fetch("https://gongdo.kr/api/datapi/place/record/add",{
             method:"POST",
             headers: {
@@ -242,10 +258,10 @@ async function uploadfile(file){
             },
             body: JSON.stringify({
                 datapiId: "eNRiOKLhAvdRTUjocI2J",
-                groupId:"default",
+                groupId:groupIdAuth,
                 form:{
-                  label:"공도",
-                  dataPack:file
+                  label:today,
+                  dataPack:recordFile
                 }
             })
             
@@ -254,6 +270,38 @@ async function uploadfile(file){
 
   console.log(result.resultData)
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+      const submitBtn = document.getElementById('submit-btn');
+
+      submitBtn.addEventListener('click', () => {
+          // Get values from the input fields
+          const fileImg = document.getElementById('logo').value;
+                if (fileImg && fileImg.type === 'image/png') {
+              const reader = new FileReader();
+              
+              reader.onload = function(e) {
+                  const base64String = e.target.result.split(',')[1];  // Get the base64 string without the data URI prefix
+                  console.log(base64String);
+              };
+              
+              reader.readAsDataURL(fileImg);
+          } else {
+              console.error('Please provide a PNG image.');
+          }
+          const address = document.getElementById('address').value;
+          const label = document.getElementById('label').value;
+
+          // Store values in variables
+          var geocoder = new google.maps.Geocoder();
+        
+          geocodeAddress(geocoder, address,label,logo);
+          
+          
+});})
+
+
 async function profileLoad(groupIdAuth){
    
   const response = await fetch("https://gongdo.kr/api/datapi/place/list", {
@@ -270,9 +318,8 @@ async function profileLoad(groupIdAuth){
   return result;
 }
 async function profileLoadAuth() {
-  const profilePhoto = document.getElementById("profilePhoto");
-  const addSchool = document.getElementById('addschool');
-  
+
+  console.log("s")
   try {
     const AuthData = globalResultAuthData
     const groupIdAuth = AuthData.body.groupId
@@ -297,6 +344,7 @@ async function folderList() {
   });
 
   const result = await response.json();
+  console.log(result)
   const sortedItems = result.resultData.items.sort((a, b) => {
     const labelA = a.label.toUpperCase(); // 대소문자 구분 없이 비교하기 위해 대문자로 변환
     const labelB = b.label.toUpperCase(); // 대소문자 구분 없이 비교하기 위해 대문자로 변환
@@ -337,24 +385,8 @@ async function folderList() {
   });
 }
 
-let globalResultAuthData; // 전역 변수 선언
 
-function AuthEvent(event) {
-  console.log(event.data);
-  console.log("this is Test")
-  // event.source.postMessage(
-  //   "hi there yourself!  the secret response " + "is: rheeeeet!",
-  //   event.origin,
-  // );
-  
-  globalResultAuthData = JSON.parse(event.data); // 전역 변수에 값 할당
-  
-}
-
-window.addEventListener("message", AuthEvent, false);
-
-
-function geocodeAddress(geocoder, address,label) {
+function geocodeAddress(geocoder, address,label,logo) {
             geocoder.geocode({ 'address': address }, function(results, status) {
                 if (status === 'OK') {
                     var lat = results[0].geometry.location.lat();
@@ -369,6 +401,7 @@ function geocodeAddress(geocoder, address,label) {
                 groupId: 'default',
                 form: {
                   label,
+                  logo,
                   address,
                   geolocation: {
                     lat,

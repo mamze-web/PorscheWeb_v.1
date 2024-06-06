@@ -558,9 +558,24 @@ hr{
 #folderZip{
   overflow: auto;
   width:292px;
-  height:280px;
+  height:420px;
   border-radius: 10px;
 
+}
+#recordUploadsZip input[type="file"] {
+  display: none;
+}
+
+#recordUploadsZip{
+  width:68px;
+}
+#recordUploadsZip label{
+  background-color:rgb(37,86,246);
+  color:white;
+  width:68px;
+  padding:10px 13px;
+  border-radius: 10px;
+  font-size: 15px;
 }
 #folderZip li{
   height:59px;
