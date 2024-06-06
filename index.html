@@ -162,7 +162,7 @@
     </div>
     
     </main>
-    <button onclick="printMessage">test</button>
+    <button id="authButton">Auth!</button>
     <!-- Firebase 초기화 스크립트 --> 
   <script>
   //   function iframeTest(){
@@ -413,6 +413,15 @@ function AuthEvent(event) {
   const resultAuthData = event.data
   return resultAuthData;
 }
+
+window.addEventListener("message", AuthEvent, false);
+// 버튼 요소 가져오기
+const button = document.getElementById("authButton");
+// 버튼에 클릭 이벤트 리스너 추가
+button.addEventListener("click", function() {
+  AuthEvent(); // AuthEvent 함수 호출
+});
+
 
 window.addEventListener("message", AuthEvent, false);
 
