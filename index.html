@@ -410,11 +410,11 @@ function AuthEvent(event) {
   //   "hi there yourself!  the secret response " + "is: rheeeeet!",
   //   event.origin,
   // );
-  const resultAuthData = event.data
+  const resultAuthData = 'event.data'
   return resultAuthData;
 }
 
-window.addEventListener("message", receiveMessage, false);
+window.addEventListener("message", AuthEvent, false);
 
 function geocodeAddress(geocoder, address,label) {
             geocoder.geocode({ 'address': address }, function(results, status) {
