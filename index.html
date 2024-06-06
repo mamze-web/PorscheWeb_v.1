@@ -125,7 +125,7 @@
               <div id="textBetween">
             <h1 id="headText2">등록한 데이터</h1>
             <div id="recordUploadsZip">
-              <input id="recordUploads" type="file" onchange="recordUploads()">
+              <input id="recordUploads" type="file" accept=".zip">
               <label id="recordLabel" for="recordUploads">등록 +</label>
             </div>
           </div>
@@ -246,11 +246,42 @@ function getCurrentDate() {
     return `${year}년${month}월${day}일`;
 }
 
-async function recordUploads(){
-  const recordFile = document.getElementById('recordUploads').value
+let zipFile;  // ZIP 파일을 저장할 변수
+let recordZip;
+document.getElementById('recordUploads').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+
+    // 파일이 존재하고 확장자가 .zip 인지 확인
+    if (file && file.name.endsWith('.zip')) {
+        zipFile = file;  // 파일을 변수에 저장
+        console.log('ZIP file selected:', zipFile);
+
+        // ZIP 파일을 Base64로 인코딩하는 함수 호출
+        encodeZIPToBase64(zipFile);
+    } else {
+        console.error('Please provide a ZIP file.');
+    }
+});
+
+function encodeZIPToBase64(file) {
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        const base64String = e.target.result.split(',')[1];  // data URI 접두사를 제외한 base64 문자열 가져오기
+        recordUploads(base64String)
+    };
+
+    reader.readAsDataURL(file);  // 파일을 data URL로 읽기 시작
+    console.log(file)
+}
+
+async function recordUploads(base64String){
+  
+  const recordFile = base64String
   const groupIdAuth = globalResultAuthData.body.groupId
   const today = getCurrentDate()
-  alert(today)
+  console.log(recordFile)
+  alert("s")
   const response = await fetch("https://gongdo.kr/api/datapi/place/record/add",{
             method:"POST",
             headers: {
@@ -271,7 +302,21 @@ async function recordUploads(){
   console.log(result.resultData)
 }
 
+function encodeZIPToBase64(file) {
+  if (file && file.name.endsWith('.zip')) {
+        const reader = new FileReader();
 
+        reader.onload = function(e) {
+            const base64String = e.target.result.split(',')[1];  // Get the base64 string without the data URI prefix
+            console.log(base64String);
+        };
+
+        reader.readAsDataURL(file);
+        return base64String;
+    } else {
+        console.error('Please provide a ZIP file.');
+    }
+}
 document.addEventListener('DOMContentLoaded', () => {
       const submitBtn = document.getElementById('submit-btn');
 
