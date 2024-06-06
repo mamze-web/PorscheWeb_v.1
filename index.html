@@ -162,7 +162,7 @@
     </div>
     
     </main>
-    <button id="authButton">Auth!</button>
+    <button id="authButton" onclick="printMessage()">Auth!</button>
     <!-- Firebase 초기화 스크립트 --> 
   <script>
   //   function iframeTest(){
@@ -193,7 +193,7 @@
           profileLoadAuth()
         };  
 function printMessage(){
-  console.log(resultAuthData)
+  console.log(globalResultAuthData)
         }
 // function absoluteAuth(){
 //     const value = window.localStorage.getItem("init-state");
@@ -272,7 +272,7 @@ async function profileLoad(groupIdAuth){
 async function profileLoadAuth() {
   const profilePhoto = document.getElementById("profilePhoto");
   const addSchool = document.getElementById('addschool');
-  console.log(globalResultAuthData)
+  
   try {
     const AuthData = globalResultAuthData
     const groupIdAuth = AuthData.body.groupId
@@ -283,52 +283,38 @@ async function profileLoadAuth() {
   }
 }
   
-async function folderList(){
+async function folderList() {
   const folderList = document.getElementById("folderZip");
-  const response = await fetch("https://gongdo.kr/api/datapi/place/list",{
-    method:"POST",
+  const response = await fetch("https://gongdo.kr/api/datapi/place/list", {
+    method: "POST",
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        datapiId: "eNRiOKLhAvdRTUjocI2J",
-        groupId: ''
-    })        
+      datapiId: "eNRiOKLhAvdRTUjocI2J",
+      groupId: ''
+    })
   });
-  
-  
-  var i;
 
   const result = await response.json();
-  const total = result.resultData.total
-  
-  for(i = 0; i < total; i++){
-    let resultAddress = result.resultData.items[i].address
-    // let resultLogo = result.resultData.items[i].logo
-    let resultLogo = "https://firebasestorage.googleapis.com/v0/b/microschool-gongdo.appspot.com/o/prod%2Fpublic%2Fclass%2F1f37450b-ec38-4982-ab86-0ff3336d672d.png?alt=media&token=8f31c113-d550-46f4-b26a-3ab2794eece9"
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ 'address': resultAddress }, function(results, status) {
-    
-        if (status === 'OK') {
-            const location = results[0].geometry.location;
-            addMarker(location, address,resultLogo,resultAddress);
-        } else {
-            console.error('지오코딩 에러:', status);
-        }
-    });
-  }
+  const sortedItems = result.resultData.items.sort((a, b) => {
+    const labelA = a.label.toUpperCase(); // 대소문자 구분 없이 비교하기 위해 대문자로 변환
+    const labelB = b.label.toUpperCase(); // 대소문자 구분 없이 비교하기 위해 대문자로 변환
+    if (labelA < labelB) return -1;
+    if (labelA > labelB) return 1;
+    return 0;
+  });
 
   folderList.innerHTML = ""; // 기존 내용 초기화
 
-  result.resultData.items.forEach(item => {
+  sortedItems.forEach(item => {
     const listItem = document.createElement("li"); // 새로운 li 요소 생성
     const nameItem = document.getElementById("nameItem");
-    
+
     // 이미지 요소 생성 및 설정
     const img = document.createElement("img");
     img.src = "https://firebasestorage.googleapis.com/v0/b/microschool-gongdo.appspot.com/o/prod%2Fres%2FPorsche%20web%2Ftest%2Fbee.png?alt=media&token=1ec62c16-c7b7-45e2-a9e5-0f5b0e286dbe"; // 이미지 URL 설정
-    img.alt = item.label; // 대체 텍스트 설정 (옵션)
-    img.width = 50; // 이미지 너비 설정 (옵션)
+    img.alt = item.label; // 대체 텍스트 설정
     img.style.borderRadius = "50%"; // 동그랗게 설정
     listItem.appendChild(img); // 이미지를 li 요소에 추가
 
@@ -339,21 +325,17 @@ async function folderList(){
     folderList.appendChild(listItem); // 생성한 li 요소를 folderList에 추가
 
     // 클릭 이벤트 추가
-    let count=0;
     listItem.addEventListener('click', () => {
       document.getElementById('secondwindow').style.display = 'block';
-      // 또는 다른 동작을 수행할 수 있습니다.
-      const resultLabel = item.label
-      const resultAddress = item.address 
-      const resultId = item.id
-      const resultLogo = item.logo
-      
-      opensecondwindow(resultLabel, resultAddress ,resultId, resultLogo  )
-      
+      const resultLabel = item.label;
+      const resultAddress = item.address;
+      const resultId = item.id;
+      const resultLogo = item.logo;
+
+      opensecondwindow(resultLabel, resultAddress, resultId, resultLogo);
     });
   });
 }
-
 
 let globalResultAuthData; // 전역 변수 선언
 
@@ -366,6 +348,7 @@ function AuthEvent(event) {
   // );
   
   globalResultAuthData = JSON.parse(event.data); // 전역 변수에 값 할당
+  
 }
 
 window.addEventListener("message", AuthEvent, false);
