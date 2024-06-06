@@ -248,6 +248,7 @@ function getCurrentDate() {
 
 let zipFile;  // ZIP 파일을 저장할 변수
 let recordZip;
+let myGroup;
 document.getElementById('recordUploads').addEventListener('change', function(event) {
     const file = event.target.files[0];
 
@@ -272,11 +273,9 @@ function encodeZIPToBase64(file) {
     };
 
     reader.readAsDataURL(file);  // 파일을 data URL로 읽기 시작
-    console.log(file)
 }
 
 async function recordUploads(base64String){
-  
   const recordFile = base64String
   const groupIdAuth = globalResultAuthData.body.groupId
   const today = getCurrentDate()
@@ -291,7 +290,7 @@ async function recordUploads(base64String){
                 datapiId: "eNRiOKLhAvdRTUjocI2J",
                 groupId:groupIdAuth,
                 form:{
-                  label:today,
+                  label:myGroup,
                   dataPack:recordFile
                 }
             })
@@ -424,7 +423,7 @@ async function folderList() {
       const resultAddress = item.address;
       const resultId = item.id;
       const resultLogo = item.logo;
-
+      myGroup = resultLabel;
       opensecondwindow(resultLabel, resultAddress, resultId, resultLogo);
     });
   });
