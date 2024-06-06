@@ -125,7 +125,7 @@
               <div id="textBetween">
             <h1 id="headText2">등록한 데이터</h1>
             <div id="recordUploadsZip">
-              <input id="recordUploads" type="file" accept=".zip">
+              <input id="recordUploads" type="file">
               <label id="recordLabel" for="recordUploads">등록 +</label>
             </div>
           </div>
@@ -280,7 +280,8 @@ function encodeZIPToBase64(file) {
 
 async function recordUploads(base64String){
   const recordFile = base64String
-  const groupIdAuth = globalResultAuthData.body.groupId
+  const today = getCurrentDate();
+  const groupIdAuth = 'default'//globalResultAuthData.body.groupId
   console.log(recordFile)
   console.log(myLabel)
   console.log(myPlace)
@@ -293,7 +294,7 @@ async function recordUploads(base64String){
                 datapiId: "eNRiOKLhAvdRTUjocI2J",
                 placeId:myPlace,
                 form:{
-                  label:myLabel,
+                  label:today,
                   dataPack:recordFile
                 }
             })
@@ -584,10 +585,12 @@ async function opensecondwindow(resultLabel, resultAddress, resultId, resultLogo
   const secondTotal = document.getElementById('secondwindowTotal');
   const secondRecord = document.getElementById('secondwindowRecord');
   const secondwindow = document.getElementById('secondwindow'); // secondwindow 요소를 참조
+
   closedWindow();
   secondwindow.style.display = "block";
   secondwindowhead.innerHTML = '<h1>' + resultLabel + '</h1>';
-  secondRecord.innerHTML=""
+  secondRecord.innerHTML = ""; // 여기에서 한 번 초기화합니다.
+
   // 기존에 있는 이미지를 모두 제거합니다.
   while (secondImg.firstChild) {
     secondImg.removeChild(secondImg.firstChild);
@@ -609,51 +612,59 @@ async function opensecondwindow(resultLabel, resultAddress, resultId, resultLogo
       placeId: resultId
     })
   });
+
   const result = await response.json();
   console.log(result);
+
   secondTotal.innerHTML = "등록된 데이터: " + result.resultData.total + "개";
 
   const total = result.resultData.total;
-  for (let i = 0; i < total; i++) {
-    // li 요소 새로 생성
-    const listItem = document.createElement("li");
 
-    // 텍스트 요소 생성 및 설정
-    const textNode = document.createTextNode(result.resultData.items[i].label); // label 값을 텍스트 노드로 설정
+  // items가 배열인지 확인하고 처리합니다.
+  if (Array.isArray(result.resultData.items)) {
+    for (let i = 0; i < total; i++) {
+      // li 요소 새로 생성
+      const listItem = document.createElement("li");
 
-    // 버튼 요소 생성 및 설정
-    const button = document.createElement("button");
-    button.textContent = "그래프 보기"; // 버튼에 텍스트 설정
+      // 텍스트 요소 생성 및 설정
+      const textNode = document.createTextNode(result.resultData.items[i].label); // label 값을 텍스트 노드로 설정
 
-    // 버튼 클릭 시 그래프 표시/숨김 토글
-    button.onclick = function() {
-      const graphDiv = listItem.nextElementSibling;
-      if (graphDiv && graphDiv.classList.contains('graph-div')) {
-        // 그래프가 이미 표시되어 있으면 삭제
-        graphDiv.remove();
-      } else {
-        // 그래프가 표시되어 있지 않으면 새로운 div 요소 생성하여 추가
-        const newGraphDiv = document.createElement("div");
-        newGraphDiv.classList.add('graph-div'); // 클래스 추가
-        const resultPreview = result.resultData.items[i].dataPackage.preview
-        const resultZip = result.resultData.items[i].dataPackage.zip
-        console.log(resultPreview)
-        newGraphDiv.innerHTML = "<div class'flex'><img id='previewGraph'src="+resultPreview+" /><br><a href="+resultZip+" download='file.zip' id='dnBtn'>다운로드</a> "; // 예시 텍스트 설정
-        newGraphDiv.style.padding = "10px"; // 스타일 설정
-        newGraphDiv.style.marginTop = "10px"; // 스타일 설정
-        listItem.insertAdjacentElement('afterend', newGraphDiv); // 형제 요소로 추가
-      }
-    };
+      // 버튼 요소 생성 및 설정
+      const button = document.createElement("button");
+      button.textContent = "그래프 보기"; // 버튼에 텍스트 설정
 
-    // 텍스트 노드와 버튼을 li 요소에 추가
-    listItem.appendChild(textNode);
-    listItem.appendChild(button);
-    secondRecord.innerHTML=""
-    // li 요소를 secondRecord에 추가
-    secondRecord.appendChild(listItem);
-    
+      // 버튼 클릭 시 그래프 표시/숨김 토글
+      button.onclick = function() {
+        const graphDiv = listItem.nextElementSibling;
+        if (graphDiv && graphDiv.classList.contains('graph-div')) {
+          // 그래프가 이미 표시되어 있으면 삭제
+          graphDiv.remove();
+        } else {
+          // 그래프가 표시되어 있지 않으면 새로운 div 요소 생성하여 추가
+          const newGraphDiv = document.createElement("div");
+          newGraphDiv.classList.add('graph-div'); // 클래스 추가
+          const resultPreview = result.resultData.items[i].dataPackage.preview;
+          const resultZip = result.resultData.items[i].dataPackage.zip;
+          console.log(resultPreview);
+          newGraphDiv.innerHTML = "<div class'flex'><img id='previewGraph' src=" + resultPreview + " /><br><a href=" + resultZip + " download='file.zip' id='dnBtn'>다운로드</a> "; // 예시 텍스트 설정
+          newGraphDiv.style.padding = "10px"; // 스타일 설정
+          newGraphDiv.style.marginTop = "10px"; // 스타일 설정
+          listItem.insertAdjacentElement('afterend', newGraphDiv); // 형제 요소로 추가
+        }
+      };
+
+      // 텍스트 노드와 버튼을 li 요소에 추가
+      listItem.appendChild(textNode);
+      listItem.appendChild(button);
+
+      // li 요소를 secondRecord에 추가
+      secondRecord.appendChild(listItem);
+    }
+  } else {
+    console.warn('resultData.items is not an array:', result.resultData.items);
   }
 }
+
 
 function displaynone(){
     document.getElementById('left').style.display = 'none';
