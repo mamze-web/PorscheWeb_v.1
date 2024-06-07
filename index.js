@@ -89,6 +89,7 @@ let pngBase64String
 let isAuth = true;
 let myLogo;
 let myGroup
+let myDatapiId
 const loginWindow = document.getElementById('loginPlz')
 document.getElementById('recordUploads').addEventListener('change', function(event) {
 const file = event.target.files[0];
