@@ -112,36 +112,35 @@ reader.onload = function(e) {
 }
 
 async function recordUploads(base64String){
-if(isAuth==true){
-const recordFile = base64String
-const today = getCurrentDate();
-const groupIdAuth = globalResultAuthData.body.groupId
-// console.log(recordFile)
-// console.log(myLabel)
-// console.log(myPlace)
-const response = await fetch("https://gongdo.kr/api/datapi/place/record/add",{
-        method:"POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            datapiId: "eNRiOKLhAvdRTUjocI2J",
-            placeId:myPlace,
-            form:{
-              label:today,
-              dataPack:recordFile
-            }
-        })
+    if(isAuth==true){
+        const recordFile = base64String;
+        const today = getCurrentDate();
+        const groupIdAuth = globalResultAuthData.body.groupId;
         
-      })
-const result= await response.json()
-
-// console.log(result.resultData)
-}
-else{
-    
-    loginWindow.style.display="flex"
-}
+        const response = await fetch("https://gongdo.kr/api/datapi/place/record/add",{
+            method:"POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                datapiId: "eNRiOKLhAvdRTUjocI2J",
+                placeId: myPlace,
+                form:{
+                    label: today,
+                    dataPack: recordFile
+                }
+            })
+        });
+        
+        const result = await response.json();
+        
+        // 레코드가 성공적으로 등록되었으면 레코드 목록을 새로고침합니다.
+        if (result.success) {
+            opensecondwindow(myLabel, "", myPlace, "", isAuth); // 레코드 목록을 새로고침합니다.
+        }
+    } else {
+        loginWindow.style.display="flex";
+    }
 }
 document.getElementById('logo').addEventListener('change', function(event){
 const file = event.target.files[0];
@@ -330,6 +329,7 @@ function geocodeAddress(geocoder, address,label,logo) {
         }})
         
       }).then((res)=> {
+        folderList(); // 주소 목록을 새로고침합니다.
         // console.log(res);
         })
       // .then((result) => console.log("결과: ", result));
