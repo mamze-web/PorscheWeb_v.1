@@ -1,8 +1,8 @@
 let globalResultAuthData; // 전역 변수 선언
 
 function AuthEvent(event) {
-  console.log(event.data);
-  console.log("this is Test")
+//   console.log(event.data);
+//   console.log("this is Test")
   // event.source.postMessage(
   //   "hi there yourself!  the secret response " + "is: rheeeeet!",
   //   event.origin,
@@ -10,7 +10,7 @@ function AuthEvent(event) {
   
   globalResultAuthData = JSON.parse(event.data); // 전역 변수에 값 할당
   isAuth = globalResultAuthData.body.isAuth
-  console.log(isAuth)
+//   console.log(isAuth)
 }
 
 window.addEventListener("message", AuthEvent, false);
@@ -44,7 +44,7 @@ window.addEventListener("message", AuthEvent, false);
       profileLoadAuth()
     };  
 function printMessage(){
-console.log(globalResultAuthData)
+// console.log(globalResultAuthData)
     }
 // function absoluteAuth(){
 //     const value = window.localStorage.getItem("init-state");
@@ -91,12 +91,12 @@ const file = event.target.files[0];
 
 if (file && file.name.endsWith('.zip')) {
     zipFile = file;  
-    console.log('ZIP file selected:', zipFile);
+    // console.log('ZIP file selected:', zipFile);
 
 
     encodeZIPToBase64(zipFile);
 } else {
-    console.error('Please provide a ZIP file.');
+    // console.error('Please provide a ZIP file.');
 }
 });
 
@@ -116,9 +116,9 @@ if(isAuth==true){
 const recordFile = base64String
 const today = getCurrentDate();
 const groupIdAuth = globalResultAuthData.body.groupId
-console.log(recordFile)
-console.log(myLabel)
-console.log(myPlace)
+// console.log(recordFile)
+// console.log(myLabel)
+// console.log(myPlace)
 const response = await fetch("https://gongdo.kr/api/datapi/place/record/add",{
         method:"POST",
         headers: {
@@ -136,7 +136,8 @@ const response = await fetch("https://gongdo.kr/api/datapi/place/record/add",{
       })
 const result= await response.json()
 
-console.log(result.resultData)}
+// console.log(result.resultData)
+}
 else{
     
     loginWindow.style.display="flex"
@@ -182,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
           
           reader.onload = function(e) {
               const base64String = e.target.result.split(',')[1];  // Get the base64 string without the data URI prefix
-              console.log(base64String);
+            //   console.log(base64String);
           };
           
           reader.readAsDataURL(fileImg);
@@ -244,7 +245,7 @@ body: JSON.stringify({
 })
 });
 const result = await response.json();
-console.log(result);
+// console.log(result);
 const sortedItems = result.resultData.items.sort((a, b) => {
 const labelA = a.label.toUpperCase(); // 대소문자 구분 없이 비교하기 위해 대문자로 변환
 const labelB = b.label.toUpperCase(); // 대소문자 구분 없이 비교하기 위해 대문자로 변환
@@ -503,7 +504,7 @@ body: JSON.stringify({
 });
 
 const result = await response.json();
-console.log(result);
+// console.log(result);
 
 secondTotal.innerHTML = "등록된 데이터: " + result.resultData.total + "개";
 
@@ -534,8 +535,8 @@ for (let i = 0; i < total; i++) {
       newGraphDiv.classList.add('graph-div'); // 클래스 추가
       const resultPreview = result.resultData.items[i].dataPackage.preview;
       const resultZip = result.resultData.items[i].dataPackage.zip;
-      console.log(resultZip)
-      console.log(resultPreview);
+    //   console.log(resultZip)
+    //   console.log(resultPreview);
       
       newGraphDiv.innerHTML = "<img id='previewGraph' src=" + resultPreview + " /><br><a href=" + resultZip + " download='"+resultLabel+"' id='dnBtn'>다운로드</a> "; // 예시 텍스트 설정
       newGraphDiv.style.padding = "10px"; // 스타일 설정
@@ -552,7 +553,7 @@ for (let i = 0; i < total; i++) {
   secondRecord.appendChild(listItem);
 }
 } else {
-console.warn('resultData.items is not an array:', result.resultData.items);
+// console.warn('resultData.items is not an array:', result.resultData.items);
 }
 }
 
