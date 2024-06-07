@@ -425,8 +425,9 @@ addFolderDisplay.style.display="none"
 }
 
 function fixBtn(){
-initAutocomplete();
+
 const fixaddress = document.getElementById('address').value;
+initAutocomplete();
 const infoHidden = document.getElementById('info-form-hidden');
 if(fixaddress){
 addFolderDisplay.classList.toggle('addFolderDisplay-click',true)
