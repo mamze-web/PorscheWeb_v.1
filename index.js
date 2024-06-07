@@ -90,7 +90,7 @@ let isAuth = true;
 let myLogo;
 let myGroup
 let myDatapiId
-folderList()
+
 const loginWindow = document.getElementById('loginPlz')
 document.getElementById('recordUploads').addEventListener('change', function(event) {
 const file = event.target.files[0];
@@ -341,7 +341,6 @@ function geocodeAddress(geocoder, address,label,logo) {
         
       }).then((res)=> {
         folderList(); // 주소 목록을 새로고침합니다.
-        // console.log(res);
         })
       // .then((result) => console.log("결과: ", result));
       // Output the formData to the console (or handle as needed)
@@ -412,6 +411,7 @@ google.maps.event.addDomListener(window, 'load', initAutocomplete);
 
 
 function addschool(){
+    folderList()
 if(isAuth==true){
 secondwindow.classList.toggle('secondwindow-click',false)
 let addFolderDisplay = document.getElementById('addFolderDisplay');
