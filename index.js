@@ -10,7 +10,9 @@ function AuthEvent(event) {
   
   globalResultAuthData = JSON.parse(event.data); // 전역 변수에 값 할당
   isAuth = globalResultAuthData.body.isAuth
-  console.log(globalResultAuthData.body)
+  myGroup = globalResultAuthData.body.groupId
+  myDatapiId = globalResultAuthData.body.datapiId
+
 //   console.log(isAuth)
 }
 
@@ -86,7 +88,7 @@ let base64File
 let pngBase64String
 let isAuth = true;
 let myLogo;
-let 
+let myGroup
 const loginWindow = document.getElementById('loginPlz')
 document.getElementById('recordUploads').addEventListener('change', function(event) {
 const file = event.target.files[0];
@@ -125,7 +127,7 @@ async function recordUploads(base64String){
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                datapiId: "eNRiOKLhAvdRTUjocI2J",
+                datapiId: myDatapiId,
                 placeId: myPlace,
                 form:{
                     label: today,
@@ -212,7 +214,7 @@ headers: {
   'Content-Type': 'application/json'
 },
 body: JSON.stringify({
-    datapiId: "eNRiOKLhAvdRTUjocI2J",
+    datapiId: myDatapiId,
     groupId: groupIdAuth
 })        
 });
@@ -241,8 +243,8 @@ headers: {
   'Content-Type': 'application/json'
 },
 body: JSON.stringify({
-  datapiId: "eNRiOKLhAvdRTUjocI2J",
-  groupId: ''
+  datapiId: myDatapiId,
+  groupId: myGroup
 })
 });
 const result = await response.json();
@@ -321,8 +323,8 @@ function geocodeAddress(geocoder, address,label,logo) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            datapiId: "eNRiOKLhAvdRTUjocI2J",
-            groupId: 'default',
+            datapiId: myDatapiId,
+            groupId: myGroup,
             form: {
               label,
               logo:pngBase64String,
@@ -502,7 +504,7 @@ headers: {
   'Content-Type': 'application/json'
 },
 body: JSON.stringify({
-  datapiId: "eNRiOKLhAvdRTUjocI2J",
+  datapiId: myDatapiId,
   placeId: resultId
 })
 });
