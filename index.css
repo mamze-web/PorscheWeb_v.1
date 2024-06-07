@@ -564,9 +564,8 @@ hr{
   border:none;
 }
 #clickarrow{
-  margin-top:3%;
-  position:fixed;
-  left:3%;
+  margin:20px;
+  left:0;
   top:0;
   background-color:rgb(37,86,246);
   text-align: right;
@@ -578,6 +577,9 @@ hr{
   border-radius: 6px;
   color:black;
   border-radius: 15px;
+  z-index:9;
+  position:absolute;
+
 }
 #arrow{
   color:white;
@@ -641,7 +643,7 @@ hr{
   padding:0px 20px;
   list-style: none;
 }
-#folderZip div img{
+#folderZip li div img{
   width:35px;
   height:auto;
 }

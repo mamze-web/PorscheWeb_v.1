@@ -537,7 +537,7 @@ for (let i = 0; i < total; i++) {
       console.log(resultZip)
       console.log(resultPreview);
       
-      newGraphDiv.innerHTML = "<div class'flex'><img id='previewGraph' src=" + resultPreview + " /><br><a href=" + resultZip + " download='file.zip' id='dnBtn'>다운로드</a> "; // 예시 텍스트 설정
+      newGraphDiv.innerHTML = "<img id='previewGraph' src=" + resultPreview + " /><br><a href=" + resultZip + " download='"+resultLabel+"' id='dnBtn'>다운로드</a> "; // 예시 텍스트 설정
       newGraphDiv.style.padding = "10px"; // 스타일 설정
       newGraphDiv.style.marginTop = "10px"; // 스타일 설정
       listItem.insertAdjacentElement('afterend', newGraphDiv); // 형제 요소로 추가
