@@ -42,9 +42,9 @@ window.addEventListener("message", AuthEvent, false);
         // 맵 초기화
         initMap();
 
-      folderList()
-      // iframeTest()
-      profileLoadAuth()
+        folderList()
+        // iframeTest()
+        profileLoadAuth()
     };  
 function printMessage(){
 // console.log(globalResultAuthData)
@@ -90,6 +90,7 @@ let isAuth = true;
 let myLogo;
 let myGroup
 let myDatapiId
+folderList()
 const loginWindow = document.getElementById('loginPlz')
 document.getElementById('recordUploads').addEventListener('change', function(event) {
 const file = event.target.files[0];
