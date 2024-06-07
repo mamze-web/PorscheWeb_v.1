@@ -72,7 +72,7 @@ h4{
   display: flex;
   justify-content: center;
   width:475px;
-  height:400px;
+  height:330px;
   overflow: auto;
 }
 #profilePhoto{
@@ -177,6 +177,11 @@ h4{
   width:420px;
   color:rgb(37,86,246);
 }
+.flex10{
+  display: flex;
+  width:100%;
+  justify-content: center;
+}
 .flex{
   display: flex;
   width:100%;
@@ -185,6 +190,7 @@ h4{
 .flex4{
   display: flex;
   width:80%;
+  margin-top:20px;
   justify-content: space-between;
   padding-top:20px;
   font-weight: bold;
@@ -232,7 +238,7 @@ justify-content: center;
   display: flex;
   justify-content: center;
   align-items: center;
-  width:100%;
+  width:135px;
   margin-top:50px;
 }
 #addressDisplay{
@@ -262,7 +268,6 @@ justify-content: center;
   top:0%;
   border-radius: 20px;
   left:105%;
-
   align-items: center;
   justify-content: center;
   display: none;
@@ -286,10 +291,11 @@ justify-content: center;
   text-align: center;
   margin:0;
   padding:0;
-  
+
 }
 #info-form-hidden{
   display: none;
+  width:475px;
   
 }
 #loginPlz{
@@ -438,7 +444,7 @@ h1{
   position: absolute;
   background-color:rgb(246,248,255);
   display: none;
-  left:105%;
+  left:120%;
   top:0;
   border-radius: 10px;
   justify-content: center;
@@ -648,8 +654,8 @@ hr{
   height:auto;
 }
 
-::-webkit-scrollbar{
-  width:100%;
+::-webkit-scrollbar{ 
+  display: none;
 }
 ::-webkit-scrollbar-track{
   background-color:transparent;

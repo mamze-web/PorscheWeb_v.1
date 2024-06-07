@@ -10,6 +10,7 @@ function AuthEvent(event) {
   
   globalResultAuthData = JSON.parse(event.data); // 전역 변수에 값 할당
   isAuth = globalResultAuthData.body.isAuth
+  console.log(globalResultAuthData.body)
 //   console.log(isAuth)
 }
 
@@ -85,6 +86,7 @@ let base64File
 let pngBase64String
 let isAuth = true;
 let myLogo;
+let 
 const loginWindow = document.getElementById('loginPlz')
 document.getElementById('recordUploads').addEventListener('change', function(event) {
 const file = event.target.files[0];
@@ -133,8 +135,7 @@ async function recordUploads(base64String){
         });
         
         const result = await response.json();
-        console.log(myLogo);
-        opensecondwindow(myLabel, "", myPlace, "",myLogo); // 레코드 목록을 새로고침합니다.
+        opensecondwindow(myLabel, "", myPlace,myLogo, isAuth); // 레코드 목록을 새로고침합니다.
         // 레코드가 성공적으로 등록되었으면 레코드 목록을 새로고침합니다.
         if (result.success) {
         }
@@ -233,6 +234,7 @@ console.error(error);
 
 async function folderList() {
 const folderList = document.getElementById("folderZip");
+folderList.innerHTML=""
 const response = await fetch("https://gongdo.kr/api/datapi/place/list", {
 method: "POST",
 headers: {
@@ -263,6 +265,9 @@ sortedItems.forEach(item => {
     imgContainer.style.overflow = 'hidden'; // 오버플로우 숨기기
     imgContainer.style.width = '35px'; // 너비 설정
     imgContainer.style.height = '35px'; // 높이 설정
+    imgContainer.style.display = 'flex';
+    imgContainer.style.justifyContent = 'center';
+    imgContainer.style.alignItems = 'center';
   
     // 이미지 요소 생성 및 설정
     const resultLogo = item.logo;
@@ -340,8 +345,6 @@ function geocodeAddress(geocoder, address,label,logo) {
             }
       }
         )
-        folderList.innerHTML = "";
-        folderList()
         }
 
 
@@ -464,7 +467,7 @@ const secondAddress = document.getElementById('secondwindowAddress');
 const secondTotal = document.getElementById('secondwindowTotal');
 const secondRecord = document.getElementById('secondwindowRecord');
 const secondwindow = document.getElementById('secondwindow'); // secondwindow 요소를 참조
-
+// console.log(resultLogo)
 closedWindow();
 secondwindow.style.display = "block";
 secondwindowhead.innerHTML = '<h1>' + resultLabel + '</h1>';
