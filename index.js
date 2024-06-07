@@ -445,7 +445,7 @@ infoHidden.classList.toggle('info-form-block',true)
 function leftThing(){
 const secondwindow = document.getElementById("secondwindow")
 const arrow = document.getElementById("arrow")
-
+arrow.innerHTML=""
 const leftThing = document.getElementById("leftThing")
 leftThing.classList.add('leftThing-click' , true)
 
@@ -453,13 +453,16 @@ leftThing.classList.add('leftThing-click' , true)
 if(count%2==0){
     leftThing.classList.toggle('leftThing-click',true);
     count = count+1;
+    arrow.innerHTML="지도 보기"
 }
 else if(count%2==1){
     leftThing.classList.toggle('leftThing-click',false);
     closedWindow()
     count = count+1;
     secondwindow.classList.toggle('secondwindow-click' , false)
+    arrow.innerHTML="✔️ 나의 주소 추가하기"
     count2=0;
+    
 }
 }
 function closedLeftArrow(){
