@@ -1,470 +1,617 @@
-const filelink = null;
-let graphtype = "line";
-const currentDate = new Date();
-const year = currentDate.getFullYear().toString().slice(-2); // 년도의 뒤에서 두 자리 가져오기
-const month = ('0' + (currentDate.getMonth() + 1)).slice(-2); // 월의 두 자리 가져오기
-const day = ('0' + currentDate.getDate()).slice(-2); // 일의 두 자리 가져오기
+let globalResultAuthData; // 전역 변수 선언
 
-const formattedDate = year + '.' + month + '.' + day;
-
-// Firebase 프로젝트의 설정 정보
-const firebaseConfig = {
-    apiKey: "AIzaSyAz3IZwipq6OS8f9ucO9j1ZKxyo-u78NIw",
-    authDomain: "macband-cf215.firebaseapp.com",
-    databaseURL: "https://macband-cf215-default-rtdb.firebaseio.com",
-    projectId: "macband-cf215",
-    storageBucket: "macband-cf215.appspot.com",
-    messagingSenderId: "586331708886",
-    appId: "1:586331708886:web:8a4416d2e48e9565c65877"
-};
-
-// Firebase 초기화
-firebase.initializeApp(firebaseConfig);
-
-// Firebase Cloud Storage 참조
-const storage = firebase.storage();
-
-// 전역 변수로 myChart 선언
-let markers = [];
-
-// 마커 클러스터러 생성
-
-// 페이지 로드시 실행
-window.onload = function() {
-    // 업로드된 폴더 목록 가져오기
-    getFolderList();
-    // 맵 초기화
-    initMap();
-    // 저장된 주소를 불러와서 맵에 마커 표시
-    loadAddresses();
-    sort();
-};
-
-// 파일 업로드 함수
-let fileaddress = null;
-let folderaddress = null;
-// 업로드된 폴더 목록 가져오기
-function addNewFolder() {
-let folderNamae = prompt("새로운 폴더의 이름을 입력하세요:");
-if (folderName) {
-const folderPath = 'uploads/' + folderNamae.replace(/\s+/g, '_');
-createNewFolder(folderPath);
-
-}
+function AuthEvent(event) {
+  console.log(event.data);
+  console.log("this is Test")
+  // event.source.postMessage(
+  //   "hi there yourself!  the secret response " + "is: rheeeeet!",
+  //   event.origin,
+  // );
+  
+  globalResultAuthData = JSON.parse(event.data); // 전역 변수에 값 할당
+  isAuth = globalResultAuthData.body.isAuth
+  console.log(isAuth)
 }
 
-// 새로운 폴더 생성 함수
-function createNewFolder(folderPath) {
-const storageRef = storage.ref(folderPath);
-storageRef.child('안녕하세요!'+folderPath+'!').putString('').then(() => {
-console.log('새로운 폴더가 성공적으로 생성되었습니다.');
-// 저장된 주소를 불러와서 맵에 마커 표시
-// 업로드된 폴더 목록 다시 불러오기
+window.addEventListener("message", AuthEvent, false);
 
-getFolderList();
-}).catch(error => {
-console.error('새로운 폴더 생성 에러:', error);
+
+//   function iframeTest(){
+//   var message = 'Hello from parent window!';
+//     window.parent.postMessage(message, '*');
+
+
+//   // 부모 페이지로 메시지를 보낸 후 응답 처리
+
+//     if (event.origin !== window.location.origin) return; // 보안을 위한 검사
+//     console.log('Received message from parent:', event.data);
+
+//     // 부모 페이지에 응답 보내기
+//     event.source.postMessage('Response from child', event.origin);
+//     console.log(message.data)
+// }
+    let count = 0;
+    let count2 = 0;
+    let map;
+    let markers = [];
+    window.onload = function() {
+        // 업로드된 폴더 목록 가져오기
+        // 맵 초기화
+        initMap();
+
+      folderList()
+      // iframeTest()
+      profileLoadAuth()
+    };  
+function printMessage(){
+console.log(globalResultAuthData)
+    }
+// function absoluteAuth(){
+//     const value = window.localStorage.getItem("init-state");
+//     const jsonValue = JSON.parse(value);
+//     console.log(jsonValue)
+//     console.log(value)
+
+//     const parentValue = window.parent.localStorage.getItem("init-state")
+//     const jsonParentValue = JSON.parse(parentValue);
+//     console.log(jsonParentValue)
+//     console.log(parentValue)
+
+//     return jsonValue;
+// }
+
+// async function absoluteAuthHardCoding(){
+//   const groupId = [
+//     'default',
+//     'true',
+//     'false'
+//   ]
+//   return groupId
+// }
+function getCurrentDate() {
+const today = new Date();
+const year = today.getFullYear();
+const month = String(today.getMonth() + 1).padStart(2, '0'); // getMonth()는 0부터 11까지 반환하므로 +1이 필요합니다.
+const day = String(today.getDate()).padStart(2, '0');
+
+return `${year}년${month}월${day}일`;
+}
+
+let zipFile;  // ZIP 파일을 저장할 변수
+let recordZip;
+let myLabel;
+let myPlace;
+let base64File
+let pngBase64String
+let isAuth
+const loginWindow = document.getElementById('loginPlz')
+document.getElementById('recordUploads').addEventListener('change', function(event) {
+const file = event.target.files[0];
+
+
+if (file && file.name.endsWith('.zip')) {
+    zipFile = file;  
+    console.log('ZIP file selected:', zipFile);
+
+
+    encodeZIPToBase64(zipFile);
+} else {
+    console.error('Please provide a ZIP file.');
+}
 });
+
+function encodeZIPToBase64(file) {
+const reader = new FileReader();
+
+reader.onload = function(e) {
+    const base64String = e.target.result.split(',')[1];
+    recordUploads(base64String)
+};
+
+// reader.readAsDataURL(file); 
 }
 
-// 업로드된 폴더 목록 가져오기
-function getFolderList() {
-const folderList = document.getElementById('folderList');
-folderList.innerHTML = ''; // 기존 목록 초기화
-
-const storageRef = storage.ref('uploads');
-storageRef.listAll().then(function(result) {
-result.prefixes.forEach(function(folderRef) {
-    const li = document.createElement('li');
-    const link = document.createElement('a');
-    link.href = "#"; // 클릭 가능한 링크로 설정
-    link.textContent = folderRef.name; // 폴더 이름을 텍스트로 사용
-    link.onclick = function() {
-        processFolder(folderRef); // 폴더 클릭 시 처리 함수 호출
-        folderaddress = folderRef.name;
-        fileaddress = folderRef;
-        document.getElementById('left').style.display = 'block';
+async function recordUploads(base64String){
+if(isAuth==true){
+const recordFile = base64String
+const today = getCurrentDate();
+const groupIdAuth = globalResultAuthData.body.groupId
+console.log(recordFile)
+console.log(myLabel)
+console.log(myPlace)
+const response = await fetch("https://gongdo.kr/api/datapi/place/record/add",{
+        method:"POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            datapiId: "eNRiOKLhAvdRTUjocI2J",
+            placeId:myPlace,
+            form:{
+              label:today,
+              dataPack:recordFile
+            }
+        })
         
-        folderaddressreal(folderRef);
-    };
-    li.appendChild(link);
-    folderList.appendChild(li);
-});
-}).catch(function(error) {
-console.error('폴더 목록 불러오기 에러:', error);
-});
-}
-let sel=document.getElementById("folderaddressbar");
-function folderaddressreal(folderRef) {
+      })
+const result= await response.json()
 
-sel.innerHTML='<span id="addressbar" onclick=displaynone()>학교목록 > </span>'+folderRef.name;
-}   
-function displaynone(){
-    document.getElementById('left').style.display = 'none';
-    sel.innerHTML='<span id="addressbar" onclick=displaynone()>학교목록 >';
-}
-function uploadFile() {
+console.log(result.resultData)}
+else{
     
-    const fileInput = document.getElementById('fileInput');
-    const file = fileInput.files[0];
-    const comment = prompt("메모를 남겨주세요.");
-    const folderPath =  'uploads/' + folderaddress.replace(/\s+/g, '_');
-    const storageRef = storage.ref(folderPath + '/' + file.name+'_'+comment+'_'+formattedDate+'.zip');
-    const task = storageRef.put(file);
-    fileInput.value = ''; // 파일 입력란 초기화
-    fileList.innerHTML = ''; // 기존 목록 초기화
-    // 사용자가 입력한 폴더 이름을 기반으로 지오코딩하여 맵에 마커 표시
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ 'address': folderName }, function(results, status) {
-        if (status === 'OK') {
-            const location = results[0].geometry.location;
-            addMarker(location, folderName);
-        } else {
-            console.error('지오코딩 에러:', status);
-        }
-    });
-
-    task.then(snapshot => {
-        folderRef = fileaddress;
-        processFolder(folderRef);
-        
-        console.log('파일 업로드 완료');
-        // 업로드된 폴더 목록 다시 불러오기
-        getFolderList();
-    }).catch(error => {
-        console.error('파일 업로드 에러:', error);
-    });
+    loginWindow.style.display="flex"
+}
+}
+document.getElementById('logo').addEventListener('change', function(event){
+const file = event.target.files[0];
+if (!file) {
+base64Output.value = 'No file selected.';
+return;
 }
 
-// 폴더 처리하기
-button = 0;
-function buttoncount(){
-    button=button+1;
-    if(button%2==0){
+const reader = new FileReader();
+reader.onload = function(event) {
+pngBase64String = event.target.result.split(',')[1];
+};
 
-            document.getElementById('dot').style.display = 'none';
-        }
-        else if(button%2==1){
-
-            document.getElementById('dot').style.display = 'block';
-        
-        }
-}
-function processFolder(folderRef) {
-const fileList = document.getElementById('fileList');
-fileList.innerHTML = ''; // 기존 목록 초기화
-
-folderRef.listAll().then(function(result) {
-// 모든 파일의 메타데이터를 가져오기
-const promises = result.items.map(itemRef => itemRef.getMetadata().then(metadata => ({ itemRef, timeCreated: new Date(metadata.timeCreated) })));
-
-Promise.all(promises).then(filesWithMetadata => {
-    // 업로드 날짜를 기준으로 내림차순 정렬
-    filesWithMetadata.sort((a, b) => b.timeCreated - a.timeCreated);
-
-    // 정렬된 파일 목록을 표시
-    filesWithMetadata.forEach(({ itemRef }) => {
-        const li = document.createElement('li');
-        const link = document.createElement('a');
-        link.href = "#"; // 클릭 가능한 링크로 설정
-        link.textContent = itemRef.name; // 파일 이름을 텍스트로 사용
-        link.onclick = function() {
-            processFile(itemRef); // 파일 클릭 시 처리 함수 호출
-            document.getElementById('folderaddressbar').innerHTML = '<span id="addressbar" onclick=displaynone()>학교목록 > </span>' + folderRef.name + ' > ' + itemRef.name;
-        };
-        li.appendChild(link);
-        fileList.appendChild(li);
-    });
-
-    // 폴더 제목과 파일 목록 표시
-    document.getElementById('folderTitle').style.display = 'block';
-    document.getElementById('uploadbtn').style.display = 'block';
-    document.getElementById('folderTitle').textContent = folderRef.name;
-
-}).catch(error => {
-    console.error('파일 메타데이터 가져오기 에러:', error);
+reader.readAsDataURL(file);
 });
-}).catch(function(error) {
-console.error('폴더 내 파일 목록 불러오기 에러:', error);
+function encodeZIPToBase64(file) {
+if (file && file.name.endsWith('.zip')) {
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        const base64String = e.target.result.split(',')[1];  // Get the base64 string without the data URI prefix
+        recordUploads(base64String);
+    };
+
+    reader.readAsDataURL(file);
+    
+} else {
+    console.error('Please provide a ZIP file.');
+}
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const submitBtn = document.getElementById('submit-btn');
+
+  submitBtn.addEventListener('click', () => {
+      // Get values from the input fields
+      const fileImg = document.getElementById('logo').value;
+            if (fileImg && fileImg.type === 'image/png') {
+          const reader = new FileReader();
+          
+          reader.onload = function(e) {
+              const base64String = e.target.result.split(',')[1];  // Get the base64 string without the data URI prefix
+              console.log(base64String);
+          };
+          
+          reader.readAsDataURL(fileImg);
+      } else {
+          console.error('Please provide a PNG image.');
+      }
+      const address = document.getElementById('address').value;
+      const label = document.getElementById('label').value;
+
+      // Store values in variables
+      var geocoder = new google.maps.Geocoder();
+    
+      geocodeAddress(geocoder, address,label,logo);
+      
+      
+});})
+
+function closedLoginWindow(){
+    loginWindow.style.display="none";
+}
+async function profileLoad(groupIdAuth){
+
+const response = await fetch("https://gongdo.kr/api/datapi/place/list", {
+method: "POST",
+headers: {
+  'Content-Type': 'application/json'
+},
+body: JSON.stringify({
+    datapiId: "eNRiOKLhAvdRTUjocI2J",
+    groupId: groupIdAuth
+})        
+});
+const result = await response.json();
+return result;
+}
+async function profileLoadAuth() {
+try {
+const AuthData = globalResultAuthData
+// const groupIdAuth = AuthData.body.groupId
+// const isClassMember = AuthData.body.isClassMember
+// console.log(groupIdAuth , isClassMember)
+} catch (error) {
+console.error(error);
+}
+}
+
+
+
+async function folderList() {
+const folderList = document.getElementById("folderZip");
+const response = await fetch("https://gongdo.kr/api/datapi/place/list", {
+method: "POST",
+headers: {
+  'Content-Type': 'application/json'
+},
+body: JSON.stringify({
+  datapiId: "eNRiOKLhAvdRTUjocI2J",
+  groupId: ''
+})
+});
+const result = await response.json();
+console.log(result);
+const sortedItems = result.resultData.items.sort((a, b) => {
+const labelA = a.label.toUpperCase(); // 대소문자 구분 없이 비교하기 위해 대문자로 변환
+const labelB = b.label.toUpperCase(); // 대소문자 구분 없이 비교하기 위해 대문자로 변환
+if (labelA < labelB) return -1;
+if (labelA > labelB) return 1;
+return 0;
+});
+
+folderList.innerHTML = ""; // 기존 내용 초기화
+
+sortedItems.forEach(item => {
+const listItem = document.createElement("li"); // 새로운 li 요소 생성
+
+// 이미지 요소 생성 및 설정
+const resultLogo = item.logo;
+const img = document.createElement("img");
+img.border = '1px'
+if (resultLogo) {
+  img.src = 'data:image/png;base64,' + resultLogo;
+} else {
+  // 결과로 받은 로고가 없는 경우 기본 이미지를 사용합니다.
+  img.src = 'https://firebasestorage.googleapis.com/v0/b/microschool-gongdo.appspot.com/o/prod%2Fres%2FPorsche%20web%2Fimg%2Fuser.png?alt=media&token=2a50dc30-9c41-46f3-8ea1-77ee170fc29b';
+}
+img.alt = item.label; // 대체 텍스트 설정
+img.style.borderRadius = "50%"; // 동그랗게 설정
+listItem.appendChild(img); // 이미지를 li 요소에 추가
+
+// 텍스트 요소 생성 및 설정
+const textNode = document.createTextNode(item.label); // label 값을 텍스트 노드로 설정
+listItem.appendChild(textNode); // 텍스트 노드를 li 요소에 추가
+
+folderList.appendChild(listItem); // 생성한 li 요소를 folderList에 추가
+
+// 클릭 이벤트 추가
+listItem.addEventListener('click', () => {
+  document.getElementById('secondwindow').style.display = 'block';
+  myLabel = item.label;
+  myPlace = item.id;
+  opensecondwindow(item.label, item.address, item.id, resultLogo);
+});
+
+// 지도에 마커 추가
+const latitude = parseFloat(item.geolocation.lat);
+const longitude = parseFloat(item.geolocation.lng);
+addMarker({ lat: latitude, lng: longitude }, item.address, resultLogo,item.label,  item.id);
 });
 }
 
 
-// 파일 처리하기
+
+function geocodeAddress(geocoder, address,label,logo) {
+        geocoder.geocode({ 'address': address }, function(results, status) {
+            if (status === 'OK') {
+                var lat = results[0].geometry.location.lat();
+                var lng = results[0].geometry.location.lng();
+                fetch("https://gongdo.kr/api/datapi/place/add",{
+        method:"POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            datapiId: "eNRiOKLhAvdRTUjocI2J",
+            groupId: 'default',
+            form: {
+              label,
+              logo:pngBase64String,
+              address,
+              geolocation: {
+                lat,
+                lng
+              
+            }
+        }})
+        
+      }).then((res)=> {
+        console.log(res);
+        })
+      // .then((result) => console.log("결과: ", result));
+      // Output the formData to the console (or handle as needed)
+    } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+      }
+        )
+        folderList.innerHTML = "";
+        folderList()
+        }
+
+
+function readURL(input) {
+if (input.files && input.files[0]) {
+var reader = new FileReader();
+
+reader.onload = function(e) {
+  document.getElementById('preview').src = e.target.result;
+};
+reader.readAsDataURL(input.files[0]);
+} else {
+document.getElementById('preview').src = "";
+}
+
+}
+
+function initAutocomplete() {
+  var input = document.getElementById('address');
+  var fixBtn = document.getElementById('fixbutton');
+  var suggestionsContainer = document.getElementById('suggestions');
+  var autocompleteService = new google.maps.places.AutocompleteService();
+  var selectedItem = null;
+
+  fixbutton.addEventListener('click', function() {
+    var value = input.value;
+    if (value) {
+      autocompleteService.getPlacePredictions({ input: value }, function(predictions, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          suggestionsContainer.innerHTML = '';
+          predictions.slice(0, 2).forEach(function(prediction) {
+            var suggestionItem = document.createElement('div');
+            suggestionItem.className = 'suggestion-item';
+            suggestionItem.textContent = prediction.description;
+            suggestionsContainer.appendChild(suggestionItem);
+
+            // 클릭 시 선택한 주소로 input 값 설정 및 스타일 변경
+            suggestionItem.addEventListener('click', function() {
+              input.value = prediction.description;
+
+              // 이전 선택 항목 스타일 초기화
+              if (selectedItem) {
+                selectedItem.classList.remove('suggestion-item-click');
+              }
+
+              // 현재 선택 항목 스타일 설정
+              suggestionItem.classList.add('suggestion-item-click');
+              selectedItem = suggestionItem;
+            });
+          });
+        }
+      });
+    } else {
+      suggestionsContainer.innerHTML = '';
+    }
+  });
+}
+
+google.maps.event.addDomListener(window, 'load', initAutocomplete);
+
+
+function addschool(){
+if(isAuth==true){
+secondwindow.classList.toggle('secondwindow-click',false)
+let addFolderDisplay = document.getElementById('addFolderDisplay');
+addFolderDisplay.style.display="block"
+
+document.getElementById('secondwindow').style.display = 'none';
+}
+else{
+    loginWindow.style.display="flex"
+}
+}
+function closedWindow(){
+addFolderDisplay.style.display="none"
+}
+
+function fixBtn(){
+initAutocomplete();
+const fixaddress = document.getElementById('address').value;
+const infoHidden = document.getElementById('info-form-hidden');
+if(fixaddress){
+addFolderDisplay.classList.toggle('addFolderDisplay-click',true)
+infoHidden.classList.toggle('info-form-block',true)
+
+}
+
+
+}
+
+
+
+function leftThing(){
+const secondwindow = document.getElementById("secondwindow")
+const arrow = document.getElementById("arrow")
+
+const leftThing = document.getElementById("leftThing")
+leftThing.classList.add('leftThing-click' , true)
+
+
+if(count%2==0){
+    leftThing.classList.toggle('leftThing-click',true);
+    count = count+1;
+}
+else if(count%2==1){
+    leftThing.classList.toggle('leftThing-click',false);
+    closedWindow()
+    count = count+1;
+    secondwindow.classList.toggle('secondwindow-click' , false)
+    count2=0;
+}
+}
+function closedLeftArrow(){
+secondwindow.style.display = "none";
+}
+async function opensecondwindow(resultLabel, resultAddress, resultId, resultLogo, isAuth) {
+const secondwindowhead = document.getElementById('secondwindowHead');
+const secondImg = document.getElementById('secondwindowLogo');
+const secondAddress = document.getElementById('secondwindowAddress');
+const secondTotal = document.getElementById('secondwindowTotal');
+const secondRecord = document.getElementById('secondwindowRecord');
+const secondwindow = document.getElementById('secondwindow'); // secondwindow 요소를 참조
+
+closedWindow();
+secondwindow.style.display = "block";
+secondwindowhead.innerHTML = '<h1>' + resultLabel + '</h1>';
+secondRecord.innerHTML = ""; // 여기에서 한 번 초기화합니다.
+
+// 기본 프로필 이미지 URL
+const defaultImgUrl = 'https://firebasestorage.googleapis.com/v0/b/microschool-gongdo.appspot.com/o/prod%2Fres%2FPorsche%20web%2Fimg%2Fuser.png?alt=media&token=2a50dc30-9c41-46f3-8ea1-77ee170fc29b';
+
+// 기존에 있는 이미지를 모두 제거합니다.
+while (secondImg.firstChild) {
+secondImg.removeChild(secondImg.firstChild);
+}
+
+// 결과로 받은 로고가 있는 경우 이미지를 표시하고, 없는 경우 기본 이미지를 표시합니다.
+if (resultLogo) {
+const img = document.createElement("img");
+img.src = 'data:image/png;base64,' + resultLogo;
+img.alt = resultLabel; // 대체 텍스트 설정
+img.style.borderRadius = "50%"; // 동그랗게 설정
+secondImg.appendChild(img); // 이미지를 secondImg 요소에 추가
+} else {
+// 결과로 받은 로고가 없는 경우 기본 이미지를 표시합니다.
+const defaultImg = document.createElement("img");
+defaultImg.src = defaultImgUrl;
+defaultImg.alt = "기본 프로필 사진";
+defaultImg.style.borderRadius = "50%";
+secondImg.appendChild(defaultImg);
+}
+
+const response = await fetch("https://gongdo.kr/api/datapi/place/record/list", {
+method: "POST",
+headers: {
+  'Content-Type': 'application/json'
+},
+body: JSON.stringify({
+  datapiId: "eNRiOKLhAvdRTUjocI2J",
+  placeId: resultId
+})
+});
+
+const result = await response.json();
+console.log(result);
+
+secondTotal.innerHTML = "등록된 데이터: " + result.resultData.total + "개";
+
+const total = result.resultData.total;
+
+// items가 배열인지 확인하고 처리합니다.
+if (Array.isArray(result.resultData.items)) {
+for (let i = 0; i < total; i++) {
+  // li 요소 새로 생성
+  const listItem = document.createElement("li");
+
+  // 텍스트 요소 생성 및 설정
+  const textNode = document.createTextNode(result.resultData.items[i].label); // label 값을 텍스트 노드로 설정
+
+  // 버튼 요소 생성 및 설정
+  const button = document.createElement("button");
+  button.textContent = "그래프 보기"; // 버튼에 텍스트 설정
+
+  // 버튼 클릭 시 그래프 표시/숨김 토글
+  button.onclick = function() {
+    const graphDiv = listItem.nextElementSibling;
+    if (graphDiv && graphDiv.classList.contains('graph-div')) {
+      // 그래프가 이미 표시되어 있으면 삭제
+      graphDiv.remove();
+    } else {
+      // 그래프가 표시되어 있지 않으면 새로운 div 요소 생성하여 추가
+      const newGraphDiv = document.createElement("div");
+      newGraphDiv.classList.add('graph-div'); // 클래스 추가
+      const resultPreview = result.resultData.items[i].dataPackage.preview;
+      const resultZip = result.resultData.items[i].dataPackage.zip;
+      console.log(resultZip)
+      console.log(resultPreview);
+      
+      newGraphDiv.innerHTML = "<div class'flex'><img id='previewGraph' src=" + resultPreview + " /><br><a href=" + resultZip + " download='file.zip' id='dnBtn'>다운로드</a> "; // 예시 텍스트 설정
+      newGraphDiv.style.padding = "10px"; // 스타일 설정
+      newGraphDiv.style.marginTop = "10px"; // 스타일 설정
+      listItem.insertAdjacentElement('afterend', newGraphDiv); // 형제 요소로 추가
+    }
+  };
+
+  // 텍스트 노드와 버튼을 li 요소에 추가
+  listItem.appendChild(textNode);
+  listItem.appendChild(button);
+
+  // li 요소를 secondRecord에 추가
+  secondRecord.appendChild(listItem);
+}
+} else {
+console.warn('resultData.items is not an array:', result.resultData.items);
+}
+}
+
+
+
+function displaynone(){
+document.getElementById('left').style.display = 'none';
+sel.innerHTML='<span id="addressbar" onclick=displaynone()>학교목록 >';
+}
+    
+function addbtn(){
+document.getElementById('addwindow').style.display = 'block';
+}
+    
+    // 파일 처리하기
 function sleep(ms) {
 const wakeUpTime = Date.now() + ms;
 while (Date.now() < wakeUpTime) {}
 }
-function addGraphFromCSV(csvData) {
-// CSV 데이터 파싱
-const rows = csvData.trim().split('\n');
-const labels = [];
-const datasets = [];
-
-// 데이터셋 생성
-rows.forEach(function(row, index) {
-const columns = row.split(',');
-if (index === 0) {
-    // 헤더 (첫 번째 행) 처리: 레이블 생성
-    columns.forEach(function(column, columnIndex) {
-        if (columnIndex > 0) {
-            datasets.push({
-                label: column.trim(), // 레이블은 CSV 파일의 두 번째 행 이후에 위치함
-                data: [],
-                backgroundColor: `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.1)`, // 랜덤한 색상 배경
-                borderColor: `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`, // 랜덤한 선 색상
-                borderWidth: 1
-            });
-        }
-    });
-} else {
-    // 데이터 행 처리
-    labels.push(columns[0].trim()); // 시간
-    columns.slice(1).forEach(function(value, valueIndex) {
-        datasets[valueIndex].data.push(parseFloat(value.trim())); // 데이터셋에 값 추가
-    });
-}
-});
-
-// 그래프 추가
-if (myChart) {
-// 기존 차트가 있으면 데이터만 추가
-datasets.forEach(function(dataset, index) {
-    myChart.data.datasets.push(dataset);
-});
-myChart.data.labels = labels; // 레이블 업데이트
-myChart.update(); // 차트 업데이트
-} else {
-// 차트가 없으면 새로운 차트 생성
-const ctx = document.getElementById('graphCanvas').getContext('2d');
-myChart = new Chart(ctx, {
-    type: graphtype,
-    data: {
-        labels: labels,
-        datasets: datasets
-    },
-    options: {
-        responsive: false,
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
-}
-}
-
-function processFile(fileRef) {
-// 파일 다운로드 URL 가져오기
-fileRef.getDownloadURL().then(function(url) {
-// ZIP 파일 다운로드
-fetch(url)
-    .then(response => response.blob())
-    .then(zipBlob => {
-        // JSZip으로 압축 해제
-        return JSZip.loadAsync(zipBlob);
-    })
-    .then(zip => {
-        // 압축 해제된 파일 중 PNG 파일 찾기
-        const imageFiles = Object.values(zip.files).filter(file => file.name.endsWith('.png'));
-        if (imageFiles.length === 0) {
-            console.error('PNG 파일을 찾을 수 없습니다.');
-            return;
-        }
-
-        // 첫 번째 PNG 파일 가져오기
-        const imageFile = imageFiles[0];
-
-        // 이미지를 표시할 영역 보이게 하기
-        document.getElementById('imageContainer').style.display = 'block';
-
-        // 이미지 파일을 Blob으로 변환하고 표시
-        imageFile.async('blob').then(blob => {
-            displayImage(blob);
-        });
-    })
-    .catch(error => {
-        console.error('파일 처리 에러:', error);
-    });
-}).catch(function(error) {
-console.error('파일 다운로드 에러:', error);
-});
-}
-
-// Blob으로부터 이미지 표시
-function displayImage(blob) {
-const canvas = document.getElementById('imageCanvas');
-const ctx = canvas.getContext('2d');
-
-const img = new Image();
-img.onload = function() {
-canvas.width = img.width;
-canvas.height = img.height;
-ctx.drawImage(img, 0, 0, img.width, img.height);
-};
-img.src = URL.createObjectURL(blob);
-}
-// CSV 데이터로 그래프 그리기
-function drawGraphFromCSV(csvData) {
-    
-    // 그래프 표시
-    document.getElementById('graphCanvas').style.display = 'block';
-
-    // 기존 그래프 파괴
-    if (myChart) {
-        changeGraphType('line')
-        myChart.destroy();
-    }
-
-    // CSV 파싱
-    const rows = csvData.trim().split('\n');
-    const labels = [];
-    const values = [];
-
-    rows.forEach(function(row, index) {
-        // 첫 번째 행은 헤더이므로 건너뜀
-        if (index === 0) return;
-
-        const columns = row.split(',');
-        if (columns.length >= 2) {
-            labels.push(columns[0].trim()); // 시간
-            values.push(parseFloat(columns[1].trim())); // 온도
-        }
-    });
-
-    // 그래프 생성
-    const ctx = document.getElementById('graphCanvas').getContext('2d');
-    myChart = new Chart(ctx, {
-        type: graphtype,
-        data: {
-            labels: labels,
-            datasets: [{
-                label: '온도',
-                data: values,
-                backgroundColor: 'rgba(0,0,0,0.1)',
-                borderColor: 'rgba(0,0,255)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            resposive: false,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
-
-// 그래프 유형 변경 함수
-function changeGraphType(type) {
-    graphtype = type;
-
-    // 현재 차트가 있으면 차트만 업데이트하고 없으면 새로운 차트 그리기
-    if (myChart) {
-        myChart.config.type = type;
-        myChart.update();
-    } else {
-        drawGraphFromCSV(currentCSVData);
-    }
-}
-/*const loginbtn = document.getElementById("loginbutton");
-const maintop = document.getElementById("main-top");
-function openkey(){
-    loginbtn.classList.add('nonedisplay');
-    maintop.classList.add('noneblur');
-}*/
-
-// 맵 초기화
-
-    let lat=37.5642135
-let lng=127.0016985
 function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: lat, lng:  lng},
-    zoom: 5,
- })
+map = new google.maps.Map(document.getElementById('map'), {
+center: { lat: 37.5642135, lng: 127.0016985 },
+zoom: 8,
+disableDefaultUI: true,
+styles:[
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  }
+]
+});
+
+// 마커 클러스터러 생성
+markerCluster = new MarkerClusterer(map, [], {
+imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+});
 }
 
-// 맵에 마커 추가
-
-function searchAddress(){
-    let searchAddressValue = document.getElementById("search").value;
-    searchAddressValue = document.getElementById("search").innerText;
-    let geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ 'address': searchAddressValue }, function(results, status) {
-        if (status === 'OK') {
-            const location = results[0].geometry.location;
-            addMarker(location, searchAddressValue);
-            map.setCenter(location); // 지오코딩된 위치를 맵의 중심으로 설정
-        } else {
-            console.error('지오코딩 에러:', status);
-        }
-    });
+// addMarker 함수 수정하여 마커 클릭 시 인포윈도우 표시
+function addMarker(location, address, resultLogo,resultLabel,resultId) {
+const marker = new google.maps.Marker({
+position: location,
+map: map,
+icon: {
+  url: 'data:image/png;base64,' + resultLogo,
+  scaledSize: new google.maps.Size(50, 50), // 이미지 크기 조절
+  origin: new google.maps.Point(0, 0), // 이미지의 원점 설정
+  anchor: new google.maps.Point(25, 25) // 이미지의 중심점 설정
 }
-function addMarker(location, address) {
-    const marker = new google.maps.Marker({
-        position: location,
-        map: map,
-        title: address,
-        icon: {
-        url: 'https://firebasestorage.googleapis.com/v0/b/macband-cf215.appspot.com/o/Mac%20photo%2Fbee.png?alt=media&token=4707b1b3-67fc-4d7c-a57a-53d5ef4265a4', // 변경할 마커 이미지의 URL
-        scaledSize: new google.maps.Size(50, 50), // 이미지 크기 조절
-        origin: new google.maps.Point(0, 0), // 이미지의 원점 설정
-        anchor: new google.maps.Point(25, 25) // 이미지의 중심점 설정
-    }
+});
 
-
-    });
-    marker.addListener('click', function() {
-// 마커의 주소 가져오기
-const markerAddress = marker.getTitle();
-
-// 인포윈도우 생성
+// 클릭 이벤트 리스너 추가
+marker.addListener('click', function() {
 const infowindow = new google.maps.InfoWindow({
-content: markerAddress
+  content: address
 });
+opensecondwindow(resultLabel, address, resultId, resultLogo);
 
-// 클릭한 마커 위에 인포윈도우 표시
-infowindow.open(map, marker);
-});
-// 마커 위치로부터 주소를 지오코딩하는 함수
+// 마커를 배열에 추가
+markers.push(marker);
 
-
-
-
-    markers.push(marker); // 마커를 배열에 추가
-
-    // 클러스터러에 마커 추가
-
+// 클러스터러에 마커 추가
+markerCluster.addMarker(marker);
 }
-
-// 저장된 주소를 불러와서 맵에 마커 표시
-
-function loadAddresses() {
-const storageRef = storage.ref('uploads');
-storageRef.listAll().then(function(result) {
-result.prefixes.forEach(function(folderRef) {
-    const address = folderRef.name.replace(/_/g, ' ');
-    folderName = address; // folderName 값 설정
-    addAddressMarker(folderRef.fullPath, address);
-});
-}).catch(function(error) {
-console.error('주소 불러오기 에러:', error);
-});
-}
-
-// 폴더 경로에서 주소를 가져와 맵에 마커 표시
-function addAddressMarker(folderPath, address) {
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ 'address': address }, function(results, status) {
-        if (status === 'OK') {
-            const location = results[0].geometry.location;
-            addMarker(location, address);
-        } else {
-            console.error('지오코딩 에러:', status);
-        }
-    });
-}
+)}
