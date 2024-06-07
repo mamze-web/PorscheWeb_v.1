@@ -83,7 +83,8 @@ let myLabel;
 let myPlace;
 let base64File
 let pngBase64String
-let isAuth
+let isAuth = true;
+let myLogo;
 const loginWindow = document.getElementById('loginPlz')
 document.getElementById('recordUploads').addEventListener('change', function(event) {
 const file = event.target.files[0];
@@ -115,7 +116,6 @@ async function recordUploads(base64String){
     if(isAuth==true){
         const recordFile = base64String;
         const today = getCurrentDate();
-        const groupIdAuth = globalResultAuthData.body.groupId;
         
         const response = await fetch("https://gongdo.kr/api/datapi/place/record/add",{
             method:"POST",
@@ -133,13 +133,13 @@ async function recordUploads(base64String){
         });
         
         const result = await response.json();
-        
+        console.log(myLogo);
+        opensecondwindow(myLabel, "", myPlace, "",myLogo); // 레코드 목록을 새로고침합니다.
         // 레코드가 성공적으로 등록되었으면 레코드 목록을 새로고침합니다.
         if (result.success) {
-            opensecondwindow(myLabel, "", myPlace, "", isAuth); // 레코드 목록을 새로고침합니다.
         }
     } else {
-        loginWindow.style.display="flex";
+        loginWindow.style.display = "flex";
     }
 }
 document.getElementById('logo').addEventListener('change', function(event){
@@ -292,6 +292,7 @@ listItem.addEventListener('click', () => {
   document.getElementById('secondwindow').style.display = 'block';
   myLabel = item.label;
   myPlace = item.id;
+  myLogo = resultLogo;
   opensecondwindow(item.label, item.address, item.id, resultLogo);
 });
 
