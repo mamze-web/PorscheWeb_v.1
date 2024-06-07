@@ -12,8 +12,11 @@ function AuthEvent(event) {
   isAuth = globalResultAuthData.body.isAuth
   myGroup = globalResultAuthData.body.groupId
   myDatapiId = globalResultAuthData.body.datapiId
-
+  
 //   console.log(isAuth)
+    console.log(myGroup)
+        
+    folderList()
 }
 
 window.addEventListener("message", AuthEvent, false);
@@ -37,12 +40,14 @@ window.addEventListener("message", AuthEvent, false);
     let count2 = 0;
     let map;
     let markers = [];
+
 window.onload = function() {
         // 업로드된 폴더 목록 가져오기
         // 맵 초기화
+
         initMap();
 
-        folderList()
+        
         // iframeTest()
         profileLoadAuth()
     };  
@@ -86,7 +91,7 @@ let myLabel;
 let myPlace;
 let base64File
 let pngBase64String
-let isAuth = true;
+let isAuth
 let myLogo;
 let myGroup
 let myDatapiId
