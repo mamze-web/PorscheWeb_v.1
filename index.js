@@ -37,7 +37,7 @@ window.addEventListener("message", AuthEvent, false);
     let count2 = 0;
     let map;
     let markers = [];
-    window.onload = function() {
+window.onload = function() {
         // 업로드된 폴더 목록 가져오기
         // 맵 초기화
         initMap();
@@ -251,7 +251,7 @@ body: JSON.stringify({
 })
 });
 const result = await response.json();
-// console.log(result);
+ console.log(result);
 const sortedItems = result.resultData.items.sort((a, b) => {
 const labelA = a.label.toUpperCase(); // 대소문자 구분 없이 비교하기 위해 대문자로 변환
 const labelB = b.label.toUpperCase(); // 대소문자 구분 없이 비교하기 위해 대문자로 변환
@@ -411,7 +411,6 @@ google.maps.event.addDomListener(window, 'load', initAutocomplete);
 
 
 function addschool(){
-    folderList()
 if(isAuth==true){
 secondwindow.classList.toggle('secondwindow-click',false)
 let addFolderDisplay = document.getElementById('addFolderDisplay');
