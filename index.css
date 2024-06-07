@@ -578,6 +578,7 @@ hr{
   font-size: 13px;
   margin-right:10px;
 }
+
 #addschool{
   background-color:rgb(37,86,246);
   border: none;
@@ -636,6 +637,7 @@ hr{
 }
 #folderZip li img{
   width:35px;
+  height:35px;
 }
 
 ::-webkit-scrollbar{
