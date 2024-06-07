@@ -14,7 +14,7 @@ function AuthEvent(event) {
   myDatapiId = globalResultAuthData.body.datapiId
   
 //   console.log(isAuth)
-    console.log(myGroup)
+    // console.log(myGroup)
         
     folderList()
 }
@@ -242,7 +242,7 @@ console.error(error);
 
 
 async function folderList() {
-    console.log('start')
+    // console.log('start')
 const folderList = document.getElementById("folderZip");
 folderList.innerHTML=""
 const response = await fetch("https://gongdo.kr/api/datapi/place/list", {
@@ -256,7 +256,7 @@ body: JSON.stringify({
 })
 });
 const result = await response.json();
- console.log(result);
+//  console.log(result);
 const sortedItems = result.resultData.items.sort((a, b) => {
 const labelA = a.label.toUpperCase(); // 대소문자 구분 없이 비교하기 위해 대문자로 변환
 const labelB = b.label.toUpperCase(); // 대소문자 구분 없이 비교하기 위해 대문자로 변환
