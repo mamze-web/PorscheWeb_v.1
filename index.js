@@ -253,25 +253,34 @@ if (labelA > labelB) return 1;
 return 0;
 });
 
-folderList.innerHTML = ""; // 기존 내용 초기화
-
 sortedItems.forEach(item => {
-const listItem = document.createElement("li"); // 새로운 li 요소 생성
-
-// 이미지 요소 생성 및 설정
-const resultLogo = item.logo;
-const img = document.createElement("img");
-img.border = '1px'
-if (resultLogo) {
-  img.src = 'data:image/png;base64,' + resultLogo;
-} else {
-  // 결과로 받은 로고가 없는 경우 기본 이미지를 사용합니다.
-  img.src = 'https://firebasestorage.googleapis.com/v0/b/microschool-gongdo.appspot.com/o/prod%2Fres%2FPorsche%20web%2Fimg%2Fuser.png?alt=media&token=2a50dc30-9c41-46f3-8ea1-77ee170fc29b';
-}
-img.alt = item.label; // 대체 텍스트 설정
-img.style.borderRadius = "50%"; // 동그랗게 설정
-listItem.appendChild(img); // 이미지를 li 요소에 추가
-
+    const listItem = document.createElement("li"); // 새로운 li 요소 생성
+  
+    // div 요소 생성 및 설정
+    const imgContainer = document.createElement("div");
+    imgContainer.style.border = '1px solid black'; // 테두리 설정
+    imgContainer.style.borderRadius = '50%'; // 동그랗게 설정
+    imgContainer.style.overflow = 'hidden'; // 오버플로우 숨기기
+    imgContainer.style.width = '35px'; // 너비 설정
+    imgContainer.style.height = '35px'; // 높이 설정
+  
+    // 이미지 요소 생성 및 설정
+    const resultLogo = item.logo;
+    const img = document.createElement("img");
+    if (resultLogo) {
+      img.src = 'data:image/png;base64,' + resultLogo;
+    } else {
+      // 결과로 받은 로고가 없는 경우 기본 이미지를 사용합니다.
+      img.src = 'https://firebasestorage.googleapis.com/v0/b/microschool-gongdo.appspot.com/o/prod%2Fres%2FPorsche%20web%2Fimg%2Fuser.png?alt=media&token=2a50dc30-9c41-46f3-8ea1-77ee170fc29b';
+    }
+    img.alt = item.label; // 대체 텍스트 설정
+    img.style.width = '100%'; // 이미지를 div 크기에 맞춤
+    img.style.height = 'auto'; // 이미지를 div 크기에 맞춤
+  
+    imgContainer.appendChild(img); // 이미지를 div 요소에 추가
+    listItem.appendChild(imgContainer); // div 요소를 li 요소에 추가
+  
+    // 여기에 listItem을 ul 요소나 다른 부모 요소에 추가하는 코드가 필요합니다.
 // 텍스트 요소 생성 및 설정
 const textNode = document.createTextNode(item.label); // label 값을 텍스트 노드로 설정
 listItem.appendChild(textNode); // 텍스트 노드를 li 요소에 추가
@@ -320,7 +329,7 @@ function geocodeAddress(geocoder, address,label,logo) {
         }})
         
       }).then((res)=> {
-        console.log(res);
+        // console.log(res);
         })
       // .then((result) => console.log("결과: ", result));
       // Output the formData to the console (or handle as needed)
@@ -472,7 +481,6 @@ if (resultLogo) {
 const img = document.createElement("img");
 img.src = 'data:image/png;base64,' + resultLogo;
 img.alt = resultLabel; // 대체 텍스트 설정
-img.style.borderRadius = "50%"; // 동그랗게 설정
 secondImg.appendChild(img); // 이미지를 secondImg 요소에 추가
 } else {
 // 결과로 받은 로고가 없는 경우 기본 이미지를 표시합니다.
