@@ -237,6 +237,7 @@ console.error(error);
 
 
 async function folderList() {
+    console.log('start')
 const folderList = document.getElementById("folderZip");
 folderList.innerHTML=""
 const response = await fetch("https://gongdo.kr/api/datapi/place/list", {
