@@ -74,6 +74,14 @@
                 <div id="suggestions" class="suggestions"></div>
               </div>
               <div class="flex">
+                <div id="photoZip">
+                <label id="photolabel" for="photo">
+                  <img id="previewPhoto" />
+                  </label>
+                <input type="file" id="photo" name="photo"onchange="readURLPhoto(this);" ><br><br>
+              </div>
+            </div>
+              <div class="flex">
               <div class="flex10">
                 <div id="logoZip">
                  
@@ -117,16 +125,20 @@
             </div>
               <div class="flex">
               <div id="headList">
-              <div id="secondwindowLogo"></div>
+              <div id="placeImg"></div>
               <div id="headText">
-                <div id="secondwindowHead"></div>
+                <div id="secondwindowLogo"></div>
+                <div class="flex-margin0">
+                  <div id="secondwindowHead"></div>
+              
+                 </div>
                 <div id="secondwindowAddress"></div>
                 <div id="secondwindowTotal"></div>
               </div>
             </div>
             </div>
             <hr>
-            <br>
+
             <div class="flex">
               <div id="textBetween">
             <h1 id="headText2">등록한 데이터</h1>

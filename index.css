@@ -19,8 +19,8 @@
   display: flex;
 }
 #preview{
-  width:cover;
-  height:170%;
+  width:150%;
+  height:auto;
 
 }
 .suggestions {
@@ -63,6 +63,7 @@ h4{
 
   width:322px;
 }
+
 .flex3{
   display: flex;
   justify-content: center;
@@ -72,9 +73,41 @@ h4{
   display: flex;
   justify-content: center;
   width:475px;
-  height:330px;
+  height:320px;
   overflow: auto;
 }
+#photolabel{
+  width:100%;
+  height:200px;
+  background-color: black;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#photoZip{
+  width:30%;
+  height:200px;
+  border: 2px rgb(37,86,246) solid;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+#photoZip img{
+  width:cover;
+  height:200px;
+}
+#photoZip input[type="file"]{
+  
+  width:0;
+  height:0;
+  padding:0;
+  overflow: hidden;
+  border:0;
+}
+
+
 #profilePhoto{
   width:120px;
   height:120px;
@@ -187,6 +220,13 @@ h4{
   width:100%;
   justify-content: center;
 }
+.flex-margin0{
+  display: flex;
+  width:100%;
+  justify-content: left;
+  align-items: center;
+  margin:0;
+}
 .flex4{
   display: flex;
   width:80%;
@@ -200,6 +240,7 @@ h4{
   justify-content: space-between;
   width:350px;
   align-items: center;
+  margin-top:0;
 }
 #addRecord{
   background-color:rgb(37,86,246);
@@ -341,7 +382,7 @@ justify-content: center;
   justify-content: space-around;
 }
 .addFolderDisplay-click{
-  height:510px !important;
+  height:710px !important;
 
 }
 
@@ -376,7 +417,7 @@ justify-content: center;
 }
 hr{
   color:rgba(204, 199, 199, 0.6);
-  margin:0px 10%;
+  margin:20px 10% 0 10%;
 }
 #leftThing{
   z-index: 1;
@@ -458,10 +499,12 @@ h1{
 }
 #headList{
   display: flex;
-  width: 100%;
+  width: 90%;
   height:200px;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  margin-top:20px;
+  margin-bottom:0px;
 
 }
 #headList img{
@@ -470,12 +513,26 @@ h1{
 }
 #headText{
   text-align: left;
+  width:100%;
+}
+#placeImg{
   width:200px;
+  height:180px;
+  border:2px rgb(37,86,246) solid;
+  margin:50px 30px 50px 30px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+#placeImg img{
+  width:auto;
+  height:180px;
 }
 #secondwindowLogo{
-  width:130px;
-  margin-right:20px;
-  height:130px;
+  width:50px;
+  height:50px;
   background-color:white;
   display: flex;
   justify-content: center;
@@ -518,7 +575,8 @@ h1{
   background-color:white;
   text-align: left;
   width:310px;
-  border-radius: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
   height:0px;
   font-size:15px;
   margin:5px 0;

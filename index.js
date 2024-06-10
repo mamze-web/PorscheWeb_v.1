@@ -46,7 +46,7 @@ window.onload = function() {
         // 맵 초기화
 
         initMap();
-
+        folderList()
         
         // iframeTest()
         profileLoadAuth()
@@ -91,9 +91,10 @@ let myLabel;
 let myPlace;
 let base64File
 let pngBase64String
-let isAuth
+let photoBase64String
+let isAuth 
 let myLogo;
-let myGroup
+let myGroup 
 let myDatapiId
 
 const loginWindow = document.getElementById('loginPlz')
@@ -166,6 +167,21 @@ pngBase64String = event.target.result.split(',')[1];
 
 reader.readAsDataURL(file);
 });
+
+document.getElementById('photo').addEventListener('change', function(event){
+  const file = event.target.files[0];
+  if (!file) {
+  base64Output.value = 'No file selected.';
+  return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = function(event) {
+  photoBase64String = event.target.result.split(',')[1];
+  };
+  
+  reader.readAsDataURL(file);
+  });
 function encodeZIPToBase64(file) {
 if (file && file.name.endsWith('.zip')) {
     const reader = new FileReader();
@@ -257,6 +273,7 @@ body: JSON.stringify({
 });
 const result = await response.json();
 //  console.log(result);
+
 const sortedItems = result.resultData.items.sort((a, b) => {
 const labelA = a.label.toUpperCase(); // 대소문자 구분 없이 비교하기 위해 대문자로 변환
 const labelB = b.label.toUpperCase(); // 대소문자 구분 없이 비교하기 위해 대문자로 변환
@@ -281,6 +298,7 @@ sortedItems.forEach(item => {
   
     // 이미지 요소 생성 및 설정
     const resultLogo = item.logo;
+    const resultPhoto = item.photo
     const img = document.createElement("img");
     if (resultLogo) {
       img.src = 'data:image/png;base64,' + resultLogo;
@@ -308,13 +326,15 @@ listItem.addEventListener('click', () => {
   myLabel = item.label;
   myPlace = item.id;
   myLogo = resultLogo;
-  opensecondwindow(item.label, item.address, item.id, resultLogo);
+  opensecondwindow(item.label, item.address, item.id, resultLogo,resultPhoto);
+  map.setCenter(item.geolocation)
+  map.setZoom(11)
 });
 
 // 지도에 마커 추가
 const latitude = parseFloat(item.geolocation.lat);
 const longitude = parseFloat(item.geolocation.lng);
-addMarker({ lat: latitude, lng: longitude }, item.address, resultLogo,item.label,  item.id);
+addMarker({ lat: latitude, lng: longitude }, item.address, resultLogo,item.label,  item.id,item.photo);
 });
 }
 
@@ -337,6 +357,7 @@ function geocodeAddress(geocoder, address,label,logo) {
               label,
               logo:pngBase64String,
               address,
+              photo:photoBase64String,
               geolocation: {
                 lat,
                 lng
@@ -370,7 +391,20 @@ document.getElementById('preview').src = "";
 }
 
 }
-
+function readURLPhoto(input) {
+  if (input.files && input.files[0]) {
+  var reader = new FileReader();
+  
+  reader.onload = function(e) {
+    document.getElementById('previewPhoto').src = e.target.result;
+  };
+  reader.readAsDataURL(input.files[0]);
+  } else {
+  document.getElementById('previewPhoto').src = "";
+  }
+  
+  }
+  
 function initAutocomplete() {
   var input = document.getElementById('address');
   var fixBtn = document.getElementById('fixbutton');
@@ -473,109 +507,97 @@ else if(count%2==1){
 function closedLeftArrow(){
 secondwindow.style.display = "none";
 }
-async function opensecondwindow(resultLabel, resultAddress, resultId, resultLogo, isAuth) {
-const secondwindowhead = document.getElementById('secondwindowHead');
-const secondImg = document.getElementById('secondwindowLogo');
-const secondAddress = document.getElementById('secondwindowAddress');
-const secondTotal = document.getElementById('secondwindowTotal');
-const secondRecord = document.getElementById('secondwindowRecord');
-const secondwindow = document.getElementById('secondwindow'); // secondwindow 요소를 참조
-// console.log(resultLogo)
-closedWindow();
-secondwindow.style.display = "block";
-secondwindowhead.innerHTML = '<h1>' + resultLabel + '</h1>';
-secondRecord.innerHTML = ""; // 여기에서 한 번 초기화합니다.
+async function opensecondwindow(resultLabel, resultAddress, resultId, resultLogo, resultPhoto) {
+  const secondwindowhead = document.getElementById('secondwindowHead');
+  const secondPhoto = document.getElementById('placeImg')
+  const secondImg = document.getElementById('secondwindowLogo');
+  const secondAddress = document.getElementById('secondwindowAddress');
+  const secondTotal = document.getElementById('secondwindowTotal');
+  const secondRecord = document.getElementById('secondwindowRecord');
+  const secondwindow = document.getElementById('secondwindow'); // secondwindow 요소를 참조
+  closedWindow();
+  secondwindow.style.display = "block";
+  secondwindowhead.innerHTML = '<h1>' + resultLabel + '</h1>';
+  secondRecord.innerHTML = ""; // 여기에서 한 번 초기화합니다.
+  secondPhoto.innerHTML="";
+  // 기본 프로필 이미지 URL
+  const defaultImgUrl = 'https://firebasestorage.googleapis.com/v0/b/microschool-gongdo.appspot.com/o/prod%2Fres%2FPorsche%20web%2Fimg%2Fuser.png?alt=media&token=2a50dc30-9c41-46f3-8ea1-77ee170fc29b';
 
-// 기본 프로필 이미지 URL
-const defaultImgUrl = 'https://firebasestorage.googleapis.com/v0/b/microschool-gongdo.appspot.com/o/prod%2Fres%2FPorsche%20web%2Fimg%2Fuser.png?alt=media&token=2a50dc30-9c41-46f3-8ea1-77ee170fc29b';
+  // 기존에 있는 이미지를 모두 제거합니다.
+  while (secondImg.firstChild) {
+      secondImg.removeChild(secondImg.firstChild);
+  }
 
-// 기존에 있는 이미지를 모두 제거합니다.
-while (secondImg.firstChild) {
-secondImg.removeChild(secondImg.firstChild);
+  // 결과로 받은 로고가 있는 경우 이미지를 표시하고, 없는 경우 기본 이미지를 표시합니다.
+  if (resultLogo) {
+      const img = document.createElement("img");
+      img.src = 'data:image/png;base64,' + resultLogo;
+      img.alt = resultLabel; // 대체 텍스트 설정
+      secondImg.appendChild(img); // 이미지를 secondImg 요소에 추가
+  } else {
+      // 결과로 받은 로고가 없는 경우 기본 이미지를 표시합니다.
+      const defaultImg = document.createElement("img");
+      defaultImg.src = defaultImgUrl;
+      defaultImg.alt = "기본 프로필 사진";
+      defaultImg.style.borderRadius = "50%";
+      secondImg.appendChild(defaultImg);
+  }
+  if(resultLogo){
+    const photo= document.createElement("img");
+    photo.src = 'data:image/png;base64,' + resultPhoto;
+    photo.alt = resultLabel;
+    secondPhoto.appendChild(photo)
+  }
+
+  const response = await fetch("https://gongdo.kr/api/datapi/place/record/list", {
+      method: "POST",
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          datapiId: myDatapiId,
+          placeId: resultId
+      })
+  });
+
+  const result = await response.json();
+  secondTotal.innerHTML = "등록된 데이터: " + result.resultData.total + "개";
+
+  const total = result.resultData.total;
+
+  // items가 배열인지 확인하고 처리합니다.
+  if (Array.isArray(result.resultData.items)) {
+      for (let i = 0; i < total; i++) {
+          // li 요소 새로 생성
+          const listItem = document.createElement("li");
+
+          // 텍스트 요소 생성 및 설정
+          const textNode = document.createTextNode(result.resultData.items[i].label); // label 값을 텍스트 노드로 설정
+
+          // 텍스트 노드를 li 요소에 추가
+          listItem.appendChild(textNode);
+
+          // li 요소를 secondRecord에 추가
+          secondRecord.appendChild(listItem);
+
+          // 새로운 div 요소 생성하여 그래프 추가
+          const newGraphDiv = document.createElement("div");
+          newGraphDiv.classList.add('graph-div'); // 클래스 추가
+          const resultPreview = result.resultData.items[i].dataPackage.preview;
+          const resultZip = result.resultData.items[i].dataPackage.zip;
+        listItem.style.marginBottom = "-5px"
+        
+          newGraphDiv.innerHTML = "<img id='previewGraph' src=" + resultPreview + " /><br><a href=" + resultZip + " download='"+resultLabel+"' id='dnBtn'>다운로드</a> "; // 예시 텍스트 설정
+          newGraphDiv.style.padding = "10px"; // 스타일 설정
+          newGraphDiv.style.marginBottom = "10px";
+          newGraphDiv.style.borderBottomLeftRadius= "10px";
+          newGraphDiv.style.borderBottomRightRadius= "10px"; // 스타일 설정
+          secondRecord.appendChild(newGraphDiv); // li 요소 다음에 div 요소 추가
+      }
+  } else {
+      console.warn('resultData.items is not an array:', result.resultData.items);
+  }
 }
-
-// 결과로 받은 로고가 있는 경우 이미지를 표시하고, 없는 경우 기본 이미지를 표시합니다.
-if (resultLogo) {
-const img = document.createElement("img");
-img.src = 'data:image/png;base64,' + resultLogo;
-img.alt = resultLabel; // 대체 텍스트 설정
-secondImg.appendChild(img); // 이미지를 secondImg 요소에 추가
-} else {
-// 결과로 받은 로고가 없는 경우 기본 이미지를 표시합니다.
-const defaultImg = document.createElement("img");
-defaultImg.src = defaultImgUrl;
-defaultImg.alt = "기본 프로필 사진";
-defaultImg.style.borderRadius = "50%";
-secondImg.appendChild(defaultImg);
-}
-
-const response = await fetch("https://gongdo.kr/api/datapi/place/record/list", {
-method: "POST",
-headers: {
-  'Content-Type': 'application/json'
-},
-body: JSON.stringify({
-  datapiId: myDatapiId,
-  placeId: resultId
-})
-});
-
-const result = await response.json();
-// console.log(result);
-
-secondTotal.innerHTML = "등록된 데이터: " + result.resultData.total + "개";
-
-const total = result.resultData.total;
-
-// items가 배열인지 확인하고 처리합니다.
-if (Array.isArray(result.resultData.items)) {
-for (let i = 0; i < total; i++) {
-  // li 요소 새로 생성
-  const listItem = document.createElement("li");
-
-  // 텍스트 요소 생성 및 설정
-  const textNode = document.createTextNode(result.resultData.items[i].label); // label 값을 텍스트 노드로 설정
-
-  // 버튼 요소 생성 및 설정
-  const button = document.createElement("button");
-  button.textContent = "그래프 보기"; // 버튼에 텍스트 설정
-
-  // 버튼 클릭 시 그래프 표시/숨김 토글
-  button.onclick = function() {
-    const graphDiv = listItem.nextElementSibling;
-    if (graphDiv && graphDiv.classList.contains('graph-div')) {
-      // 그래프가 이미 표시되어 있으면 삭제
-      graphDiv.remove();
-    } else {
-      // 그래프가 표시되어 있지 않으면 새로운 div 요소 생성하여 추가
-      const newGraphDiv = document.createElement("div");
-      newGraphDiv.classList.add('graph-div'); // 클래스 추가
-      const resultPreview = result.resultData.items[i].dataPackage.preview;
-      const resultZip = result.resultData.items[i].dataPackage.zip;
-    //   console.log(resultZip)
-    //   console.log(resultPreview);
-      
-      newGraphDiv.innerHTML = "<img id='previewGraph' src=" + resultPreview + " /><br><a href=" + resultZip + " download='"+resultLabel+"' id='dnBtn'>다운로드</a> "; // 예시 텍스트 설정
-      newGraphDiv.style.padding = "10px"; // 스타일 설정
-      newGraphDiv.style.marginTop = "10px"; // 스타일 설정
-      listItem.insertAdjacentElement('afterend', newGraphDiv); // 형제 요소로 추가
-    }
-  };
-
-  // 텍스트 노드와 버튼을 li 요소에 추가
-  listItem.appendChild(textNode);
-  listItem.appendChild(button);
-
-  // li 요소를 secondRecord에 추가
-  secondRecord.appendChild(listItem);
-}
-} else {
-// console.warn('resultData.items is not an array:', result.resultData.items);
-}
-}
-
-
-
 function displaynone(){
 document.getElementById('left').style.display = 'none';
 sel.innerHTML='<span id="addressbar" onclick=displaynone()>학교목록 >';
@@ -615,7 +637,7 @@ imagePath: 'https://developers.google.com/maps/documentation/javascript/examples
 }
 
 // addMarker 함수 수정하여 마커 클릭 시 인포윈도우 표시
-function addMarker(location, address, resultLogo,resultLabel,resultId) {
+function addMarker(location, address, resultLogo,resultLabel,resultId,resultPhoto) {
 const marker = new google.maps.Marker({
 position: location,
 map: map,
@@ -631,8 +653,10 @@ icon: {
 marker.addListener('click', function() {
 const infowindow = new google.maps.InfoWindow({
   content: address
+  
 });
-opensecondwindow(resultLabel, address, resultId, resultLogo);
+
+opensecondwindow(resultLabel, address, resultId, resultLogo,resultPhoto);
 
 // 마커를 배열에 추가
 markers.push(marker);
